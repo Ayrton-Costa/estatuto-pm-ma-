@@ -1,0 +1,25 @@
+name: Supabase Keep-Alive
+
+# Faz uma pequena requisição diária ao Supabase para evitar
+# que o projeto entre em pausa por inatividade (limite de 7 dias
+# no plano gratuito).
+
+on:
+  schedule:
+    # Todos os dias às 09:00 UTC (~06:00 horário de Brasília)
+    - cron: '0 9 * * *'
+  workflow_dispatch: {} # permite executar manualmente em "Actions"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: "https://dgbkituuhzcoaftdrwyx.supabase.co"
+          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnYmtpdHV1aHpjb2FmdGRyd3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNDI2NDEsImV4cCI6MjA5MjgxODY0MX0.RdnTq8nANbHx-2HYWx8R71ezfL1aAoA2QZFj926O3HI"
+        run: |
+          curl -s -o /dev/null -w "HTTP status: %{http_code}\n" \
+            "$SUPABASE_URL/rest/v1/sessoes?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY"
