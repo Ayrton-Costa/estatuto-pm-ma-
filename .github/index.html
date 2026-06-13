@@ -1,0 +1,2906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudo Interativo - Estatuto dos Policiais-Militares do MA (Lei 6.513/95)</title>
+<style>
+  :root{
+    --bg:#0f1117;
+    --card:#1a1d29;
+    --card2:#222637;
+    --accent:#2dd4bf;
+    --accent2:#fbbf24;
+    --red:#f87171;
+    --green:#4ade80;
+    --text:#e5e7eb;
+    --muted:#9ca3af;
+    --border:#2e3344;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    background:linear-gradient(135deg,#0f1117 0%,#161a26 100%);
+    color:var(--text);
+    min-height:100vh;
+    padding:0;
+  }
+  header{
+    background:linear-gradient(90deg,#0b3d3a,#134e4a);
+    padding:20px;
+    text-align:center;
+    border-bottom:3px solid var(--accent);
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+  header h1{
+    font-size:1.4rem;
+    color:#fff;
+    letter-spacing:0.5px;
+  }
+  header p{
+    color:#a7f3d0;
+    font-size:0.85rem;
+    margin-top:4px;
+  }
+  .container{
+    max-width:900px;
+    margin:0 auto;
+    padding:16px;
+  }
+  nav{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin:16px 0;
+  }
+  nav button{
+    background:var(--card2);
+    color:var(--text);
+    border:1px solid var(--border);
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:0.9rem;
+    transition:0.2s;
+  }
+  nav button:hover{
+    background:var(--accent);
+    color:#0f1117;
+    border-color:var(--accent);
+  }
+  nav button.active{
+    background:var(--accent);
+    color:#0f1117;
+    font-weight:bold;
+  }
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* DASHBOARD */
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;
+    margin:16px 0;
+  }
+  .stat-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+    text-align:center;
+  }
+  .stat-box .num{
+    font-size:2rem;
+    font-weight:bold;
+    color:var(--accent);
+  }
+  .stat-box .lbl{
+    color:var(--muted);
+    font-size:0.8rem;
+    margin-top:4px;
+  }
+  .intro-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    margin:16px 0;
+    line-height:1.6;
+  }
+  .intro-card h2{color:var(--accent2);margin-bottom:8px;font-size:1.1rem;}
+  .intro-card ul{margin-left:20px;margin-top:8px;color:var(--muted);}
+  .intro-card li{margin-bottom:4px;}
+
+  /* QUIZ */
+  .quiz-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .progress-bar{
+    background:var(--card2);
+    border-radius:20px;
+    height:10px;
+    overflow:hidden;
+    width:100%;
+    margin:8px 0 16px;
+  }
+  .progress-fill{
+    background:linear-gradient(90deg,var(--accent),#22c55e);
+    height:100%;
+    transition:width 0.3s;
+  }
+  .question-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+  }
+  .q-meta{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.75rem;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .q-tag{
+    background:var(--card2);
+    padding:3px 10px;
+    border-radius:20px;
+    border:1px solid var(--border);
+  }
+  .q-text{
+    font-size:1.05rem;
+    line-height:1.5;
+    margin-bottom:16px;
+  }
+  .q-situacao{
+    font-size:0.92rem;
+    line-height:1.6;
+    color:#c7d2e7;
+    background:#1a1e2e;
+    border-left:3px solid var(--accent);
+    padding:10px 14px;
+    border-radius:0 8px 8px 0;
+    margin-bottom:12px;
+    font-style:italic;
+  }
+  .q-assertiva{
+    font-size:1.02rem;
+    line-height:1.5;
+    margin-bottom:16px;
+    color:var(--text);
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .option{
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px 14px;
+    cursor:pointer;
+    transition:0.15s;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    line-height:1.4;
+  }
+  .option:hover{border-color:var(--accent);}
+  .option.selected{border-color:var(--accent);background:#1e3a36;}
+  .option.correct{
+    border-color:var(--green);
+    background:#15351f;
+  }
+  .option.incorrect{
+    border-color:var(--red);
+    background:#3a1717;
+  }
+  .opt-letter{
+    font-weight:bold;
+    background:#0f1117;
+    border-radius:6px;
+    width:26px;height:26px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    font-size:0.85rem;
+  }
+  .feedback{
+    margin-top:16px;
+    padding:14px;
+    border-radius:8px;
+    display:none;
+    line-height:1.6;
+    font-size:0.92rem;
+  }
+  .feedback.show{display:block;}
+  .feedback.correct{background:#0f2a1c;border:1px solid var(--green);}
+  .feedback.incorrect{background:#2a1414;border:1px solid var(--red);}
+  .feedback .ftitle{font-weight:bold;margin-bottom:6px;}
+  .feedback .ftitle.ok{color:var(--green);}
+  .feedback .ftitle.bad{color:var(--red);}
+  .macete{
+    margin-top:10px;
+    padding:10px;
+    background:#1e1b0f;
+    border-left:3px solid var(--accent2);
+    border-radius:6px;
+    font-size:0.88rem;
+  }
+  .macete b{color:var(--accent2);}
+  .art-ref{
+    margin-top:8px;
+    font-size:0.8rem;
+    color:var(--muted);
+    font-style:italic;
+  }
+  .nav-buttons{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:12px;
+  }
+  .btn{
+    background:var(--accent);
+    color:#0f1117;
+    border:none;
+    padding:12px 22px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:0.95rem;
+    flex:1;
+  }
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn.secondary{
+    background:var(--card2);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .filter-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  select, input[type=number]{
+    background:var(--card2);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px;
+    font-size:0.9rem;
+  }
+  .results-box{
+    text-align:center;
+    padding:30px 20px;
+  }
+  .results-box .big-score{
+    font-size:3rem;
+    font-weight:bold;
+    color:var(--accent);
+    margin:10px 0;
+  }
+  /* BANK VIEW */
+  .bank-item{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+  }
+  .bank-item .q-text{font-size:0.95rem;margin-bottom:8px;}
+  .bank-item .ans{
+    font-size:0.85rem;
+    color:var(--green);
+    margin-bottom:4px;
+  }
+  .search-box{
+    width:100%;
+    margin-bottom:12px;
+    padding:12px;
+  }
+  /* MACETES */
+  .macete-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-left:4px solid var(--accent2);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .macete-card h3{color:var(--accent2);margin-bottom:6px;font-size:1rem;}
+  .macete-card p{line-height:1.6;font-size:0.92rem;color:var(--text);}
+  .badge{
+    display:inline-block;
+    background:var(--card2);
+    color:var(--muted);
+    padding:2px 8px;
+    border-radius:10px;
+    font-size:0.7rem;
+    margin-bottom:6px;
+  }
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.8rem;
+    padding:24px;
+  }
+  /* AUTH */
+  #authBox input{
+    background:#0f1117;
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:6px 10px;
+    font-size:0.85rem;
+    margin-right:4px;
+  }
+  #authBox button{
+    background:var(--accent);
+    color:#0f1117;
+    border:none;
+    border-radius:6px;
+    padding:6px 12px;
+    font-size:0.85rem;
+    cursor:pointer;
+    font-weight:bold;
+  }
+  #authBox .logout-btn{
+    background:var(--card2);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  /* HISTORICO */
+  .hist-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 14px;
+    margin-bottom:8px;
+    font-size:0.85rem;
+  }
+  .hist-row .hr-tema{color:var(--accent2);font-weight:bold;}
+  .hist-row .hr-score{
+    font-weight:bold;
+  }
+  .hist-row .hr-score.good{color:var(--green);}
+  .hist-row .hr-score.bad{color:var(--red);}
+  .tema-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--card2);
+    border-radius:8px;
+    padding:8px 12px;
+    margin-bottom:6px;
+    font-size:0.85rem;
+  }
+  .tema-bar .bar-track{
+    flex:1;
+    height:8px;
+    background:#0f1117;
+    border-radius:6px;
+    margin:0 10px;
+    overflow:hidden;
+  }
+  .tema-bar .bar-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--accent),#22c55e);
+  }
+
+  /* LOGIN SCREEN */
+  .login-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .login-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:32px;
+    max-width:400px;
+    width:100%;
+    text-align:center;
+  }
+  .login-card h1{
+    font-size:1.3rem;
+    color:#fff;
+    margin-bottom:4px;
+  }
+  .login-sub{
+    color:var(--muted);
+    font-size:0.85rem;
+    margin-bottom:20px;
+  }
+  .login-tabs{
+    display:flex;
+    gap:4px;
+    background:var(--card2);
+    border-radius:10px;
+    padding:4px;
+    margin-bottom:18px;
+  }
+  .login-tab{
+    flex:1;
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    padding:8px 6px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:0.8rem;
+    font-weight:bold;
+  }
+  .login-tab.active{
+    background:var(--accent);
+    color:#0f1117;
+  }
+  .login-pane{display:none;text-align:left;}
+  .login-pane.active{display:block;}
+  .login-pane label{
+    display:block;
+    font-size:0.8rem;
+    color:var(--muted);
+    margin:10px 0 4px;
+  }
+  .login-pane input{
+    width:100%;
+    background:#0f1117;
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:11px 12px;
+    font-size:0.95rem;
+  }
+  .login-pane input:focus{
+    outline:none;
+    border-color:var(--accent);
+  }
+  .login-btn{
+    width:100%;
+    background:var(--accent);
+    color:#0f1117;
+    border:none;
+    border-radius:8px;
+    padding:12px;
+    font-weight:bold;
+    font-size:0.95rem;
+    cursor:pointer;
+    margin-top:16px;
+  }
+  .login-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .login-msg{
+    margin-top:10px;
+    font-size:0.85rem;
+    min-height:18px;
+    color:var(--accent2);
+  }
+  .login-msg.error{color:var(--red);}
+  .login-msg.ok{color:var(--green);}
+  .login-forgot{
+    margin-top:12px;
+    font-size:0.8rem;
+    color:var(--accent);
+    cursor:pointer;
+    text-align:center;
+    text-decoration:underline;
+  }
+  .login-hint{
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-top:10px;
+    line-height:1.4;
+  }
+  .login-footer{
+    margin-top:22px;
+    font-size:0.75rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  /* SIMULADO */
+  .sim-config{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:24px;
+  }
+  .sim-config h2{color:var(--accent2);margin-bottom:10px;}
+  .sim-config p{color:var(--muted);line-height:1.6;margin-bottom:6px;font-size:0.9rem;}
+  .sim-rules{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px;
+    margin:16px 0;
+  }
+  .sim-rule{
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+  }
+  .sim-rule .sr-icon{font-size:1.4rem;}
+  .sim-rule .sr-val{font-weight:bold;font-size:1.1rem;margin-top:4px;}
+  .sim-rule .sr-lbl{color:var(--muted);font-size:0.75rem;margin-top:2px;}
+  .sim-rule.positive .sr-val{color:var(--green);}
+  .sim-rule.negative .sr-val{color:var(--red);}
+  .sim-rule.neutral .sr-val{color:var(--muted);}
+
+  .sim-nav{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .sim-nav-item{
+    width:34px;height:34px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    background:var(--card2);
+    color:var(--text);
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.8rem;
+    cursor:pointer;
+    font-weight:bold;
+  }
+  .sim-nav-item.current{border-color:var(--accent);border-width:2px;}
+  .sim-nav-item.answered-c{background:#15351f;border-color:var(--green);}
+  .sim-nav-item.answered-e{background:#3a1717;border-color:var(--red);}
+  .sim-nav-item.blank{background:var(--card2);color:var(--muted);}
+
+  .sim-finish-bar{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:10px;
+  }
+
+  /* RESULTADO DO SIMULADO */
+  .sim-result-header{
+    text-align:center;
+    padding:24px 16px;
+  }
+  .sim-result-header .big-score{
+    font-size:3.2rem;
+    font-weight:bold;
+    margin:8px 0;
+  }
+  .sim-pass-badge{
+    display:inline-block;
+    padding:8px 24px;
+    border-radius:30px;
+    font-weight:bold;
+    font-size:1.1rem;
+    margin-top:8px;
+  }
+  .sim-pass-badge.approved{
+    background:#0f2a1c;
+    color:var(--green);
+    border:2px solid var(--green);
+  }
+  .sim-pass-badge.failed{
+    background:#2a1414;
+    color:var(--red);
+    border:2px solid var(--red);
+  }
+  .sim-breakdown{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
+    margin:18px 0;
+  }
+  .sim-breakdown .bd-box{
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+  }
+  .sim-breakdown .bd-num{font-size:1.4rem;font-weight:bold;}
+  .sim-breakdown .bd-lbl{color:var(--muted);font-size:0.75rem;margin-top:2px;}
+  .bd-box.bd-correct .bd-num{color:var(--green);}
+  .bd-box.bd-wrong .bd-num{color:var(--red);}
+  .bd-box.bd-blank .bd-num{color:var(--muted);}
+
+  .review-item{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+  }
+  .review-item .ri-status{
+    display:inline-block;
+    padding:2px 10px;
+    border-radius:12px;
+    font-size:0.72rem;
+    font-weight:bold;
+    margin-bottom:6px;
+  }
+  .ri-status.correct{background:#0f2a1c;color:var(--green);}
+  .ri-status.wrong{background:#2a1414;color:var(--red);}
+  .ri-status.blank{background:var(--card2);color:var(--muted);}
+  @media (max-width:480px){
+    header h1{font-size:1.1rem;}
+    nav button{font-size:0.8rem;padding:8px 12px;}
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <h1>📘 Estatuto PM-MA</h1>
+    <p class="login-sub">Lei nº 6.513/1995 — Plataforma de estudo CEBRASPE</p>
+
+    <div class="login-tabs">
+      <button class="login-tab active" data-tab="signin">Entrar</button>
+      <button class="login-tab" data-tab="signup">Criar conta</button>
+      <button class="login-tab" data-tab="magic">Link por e-mail</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="login-pane active" id="pane-signin">
+      <label>E-mail</label>
+      <input type="email" id="signinEmail" placeholder="seu@email.com" autocomplete="email">
+      <label>Senha</label>
+      <input type="password" id="signinPassword" placeholder="••••••••" autocomplete="current-password">
+      <button class="login-btn" id="signinBtn">Entrar</button>
+      <div class="login-msg" id="signinMsg"></div>
+      <div class="login-forgot" id="forgotBtn">Esqueci minha senha</div>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="login-pane" id="pane-signup">
+      <label>E-mail</label>
+      <input type="email" id="signupEmail" placeholder="seu@email.com" autocomplete="email">
+      <label>Senha (mín. 6 caracteres)</label>
+      <input type="password" id="signupPassword" placeholder="••••••••" autocomplete="new-password">
+      <button class="login-btn" id="signupBtn">Criar conta</button>
+      <div class="login-msg" id="signupMsg"></div>
+    </div>
+
+    <!-- MAGIC LINK -->
+    <div class="login-pane" id="pane-magic">
+      <label>E-mail</label>
+      <input type="email" id="magicEmail" placeholder="seu@email.com" autocomplete="email">
+      <button class="login-btn" id="magicBtn">Enviar link de acesso</button>
+      <div class="login-msg" id="magicMsg"></div>
+      <p class="login-hint">Você receberá um link por e-mail para entrar sem senha.</p>
+    </div>
+
+    <p class="login-footer">Seu progresso (respostas, acertos e histórico) fica salvo de forma privada na sua conta e pode ser acessado de qualquer dispositivo.</p>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="appShell" style="display:none;">
+
+<header>
+  <h1>📘 Estatuto dos PMs do Maranhão — Lei nº 6.513/1995</h1>
+  <p>Plataforma de estudo CEBRASPE • PM-MA</p>
+  <div id="authBox" style="margin-top:10px;font-size:0.85rem;">
+    <span id="authStatus"></span>
+  </div>
+</header>
+
+<div class="container">
+  <nav>
+    <button class="navbtn active" data-view="dashboard">🏠 Início</button>
+    <button class="navbtn" data-view="quiz">📝 Quiz</button>
+    <button class="navbtn" data-view="simulado">🎯 Simulado</button>
+    <button class="navbtn" data-view="bank">📚 Banco de Questões</button>
+    <button class="navbtn" data-view="macetes">💡 Macetes</button>
+    <button class="navbtn" data-view="historico">📊 Meu Histórico</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="dashboard">
+    <div class="intro-card">
+      <h2>Como usar esta plataforma</h2>
+      <p>Esta página foi montada com base no texto integral da Lei nº 6.513/1995 (Estatuto dos Policiais-Militares do Maranhão), cobrindo todos os títulos e capítulos: ingresso, hierarquia, deveres, direitos, remuneração, promoção, férias, licenças, situações especiais (agregação, reversão, excedente, deserção), reforma, reserva e disposições finais.</p>
+      <ul>
+        <li><b>Quiz:</b> responda questões estilo CEBRASPE (Certo/Errado e múltipla escolha), com correção imediata, explicação do artigo e macete de memorização.</li>
+        <li><b>Banco de Questões:</b> veja todas as 100+ questões com gabarito, busque por palavra-chave ou artigo.</li>
+        <li><b>Macetes:</b> mnemônicos e dicas organizados por tema para fixar os pontos que mais caem em prova.</li>
+      </ul>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="num" id="totalQ">0</div><div class="lbl">Questões disponíveis</div></div>
+      <div class="stat-box"><div class="num" id="totalArts">168</div><div class="lbl">Artigos da Lei</div></div>
+      <div class="stat-box"><div class="num" id="sessionScore">0%</div><div class="lbl">Aproveitamento (sessão)</div></div>
+      <div class="stat-box"><div class="num" id="sessionDone">0</div><div class="lbl">Respondidas (sessão)</div></div>
+    </div>
+    <div class="intro-card">
+      <h2>⚡ Dica geral para CEBRASPE</h2>
+      <p>A banca CEBRASPE adora trocar números (idades, prazos, percentuais), trocar "pode/poderá" por "deve/deverá" (discricionariedade × obrigatoriedade), inverter sujeitos (ex: "Governador" por "Comandante-Geral") e generalizar exceções ("todos os militares" quando a lei restringe a um grupo). Leia a questão pensando: <b>"o que mudou em relação ao texto literal?"</b></p>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="view" id="quiz">
+    <div class="filter-row">
+      <select id="filterTema">
+        <option value="todos">Todos os temas</option>
+      </select>
+      <select id="numQuestoes">
+        <option value="10">10 questões</option>
+        <option value="20">20 questões</option>
+        <option value="50">50 questões</option>
+        <option value="999">Todas</option>
+      </select>
+      <button class="btn" id="startQuiz" style="flex:0 0 auto;">Iniciar Quiz</button>
+    </div>
+    <div id="quizArea"></div>
+  </div>
+
+  <!-- SIMULADO -->
+  <div class="view" id="simulado">
+    <div id="simuladoArea"></div>
+  </div>
+
+  <!-- BANK -->
+  <div class="view" id="bank">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Buscar por palavra-chave, artigo ou tema...">
+    <div id="bankList"></div>
+  </div>
+
+  <!-- MACETES -->
+  <div class="view" id="macetes">
+    <div id="macetesList"></div>
+  </div>
+
+  <!-- HISTORICO -->
+  <div class="view" id="historico">
+    <div id="historicoArea">
+      <div class="intro-card">Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<footer>Conteúdo baseado na Lei nº 6.513/1995 (Estatuto dos PMs do MA) — material de estudo, não substitui a leitura da lei atualizada.</footer>
+
+</div><!-- /appShell -->
+
+<script>
+/* ============================================================
+   BANCO DE QUESTÕES - Estatuto PM/MA - Lei 6.513/1995
+   Cada questão: {id, tema, artigo, tipo:'CE'|'MC', enunciado, opcoes(se MC), correta, explicacao, macete}
+   ============================================================ */
+const QUESTOES = [
+// ---------- TÍTULO I - GENERALIDADES ----------
+{tema:"Generalidades", artigo:"Art. 1º e 2º", tipo:"CE",
+ enunciado:"Os integrantes da Polícia Militar do Maranhão constituem uma categoria de servidores públicos civis do Estado.",
+ correta:false,
+ explicacao:"Errado. O art. 2º estabelece que os integrantes da PM constituem categoria de Servidores Públicos MILITARES do Estado, não civis.",
+ macete:"Sempre que a questão trocar 'militar' por 'civil' (ou vice-versa) em relação ao status do PM, fique atento — é pegadinha clássica."},
+
+{tema:"Generalidades", artigo:"Art. 2º, §1º", tipo:"CE",
+ enunciado:"As expressões 'servidor público militar estadual', 'militar', 'policial militar' e 'servidor militar do estado' são equivalentes para fins do Estatuto.",
+ correta:true,
+ explicacao:"Certo. O §1º do art. 2º traz exatamente essa equivalência terminológica.",
+ macete:"Leis costumam ter artigos de 'equivalência de expressões' (arts. 2º, 5º, 6º). Memorize que existem e que CEBRASPE cobra a lista exata — qualquer termo fora da lista torna a questão errada."},
+
+{tema:"Generalidades", artigo:"Art. 2º, §2º", tipo:"CE",
+ enunciado:"Segundo o art. 2º, §2º, são situações dos servidores públicos militares ESTAR NA ATIVA, EXCETO: Os reformados por terem sido dispensados definitivamente do serviço.",
+ correta:true,
+ explicacao:"A alternativa D descreve situação de INATIVIDADE (reformados), não de atividade. As demais (a, b, c) estão no inciso I (na ativa).",
+ macete:"Decore a estrutura: NA ATIVA = carreira + voluntários + reserva convocada + alunos. NA INATIVIDADE = reserva remunerada sujeita à convocação + reformados."},
+
+{tema:"Generalidades", artigo:"Art. 4º, §2º", tipo:"CE",
+ enunciado:"É privativa de brasileiros natos a carreira de Oficial da Polícia Militar.",
+ correta:true,
+ explicacao:"Certo, conforme art. 4º, §2º — reflete a regra constitucional sobre cargos privativos de brasileiro nato.",
+ macete:"Lembre-se da lista constitucional de cargos privativos de brasileiro nato (Presidente, Vice, Ministro de Defesa, oficiais das Forças Armadas etc.) — Oficial PM se encaixa na lógica de Forças Armadas/segurança."},
+
+{tema:"Generalidades", artigo:"Art. 8º", tipo:"CE",
+ enunciado:"O ingresso na Polícia Militar do Maranhão é facultado a todos os brasileiros, sem distinção de raça ou crença religiosa, mediante matrícula ou nomeação, após aprovação em concurso público.",
+ correta:true,
+ explicacao:"Certo — reprodução literal do art. 8º (com redação dada pela Lei nº 8.080/2004).",
+ macete:"Questões 'cópia fiel' do texto de lei costumam estar CERTAS, salvo se a banca alterar uma palavra-chave. Releia procurando trocas sutis (ex: 'facultado' por 'obrigatório')."},
+
+// ---------- INGRESSO ----------
+{tema:"Ingresso", artigo:"Art. 9º", tipo:"CE",
+ enunciado:"Para matrícula em estabelecimento de ensino militar destinado à formação de Oficiais, Sargentos e Soldados PM, exige-se altura mínima de: 1,70 m para homens e 1,65 m para mulheres.",
+ correta:false,
+ explicacao:"O art. 9º, VII, exige no mínimo 1,65 m para o sexo masculino e 1,60 m para o sexo feminino.",
+ macete:"Macete numérico: '65 e 60' — masculino sempre o número maior (1,65), feminino o menor (1,60). Decore o par."},
+
+{tema:"Ingresso", artigo:"Art. 9º, IV", tipo:"CE",
+ enunciado:"A idade máxima exigida para matrícula nos cursos de formação é de 28 anos, considerada na data limite da inscrição.",
+ correta:true,
+ explicacao:"Certo, conforme redação dada pela Lei nº 7.855/2003 ao inciso IV do art. 9º.",
+ macete:"Idade máxima = 28 anos, contados até a DATA LIMITE DA INSCRIÇÃO (não da matrícula nem da posse) — detalhe que a banca adora trocar."},
+
+{tema:"Ingresso", artigo:"Art. 9º, II", tipo:"CE",
+ enunciado:"Atualmente, é requisito para matrícula nos cursos de formação que o candidato seja solteiro.",
+ correta:false,
+ explicacao:"Errado. O inciso II ('ser solteiro') foi REVOGADO pela Lei nº 8.362/2005, não sendo mais exigido.",
+ macete:"Atenção a dispositivos revogados! O Estatuto tem vários incisos revogados ('ser solteiro', cursos antigos etc.). A banca pode perguntar sobre a redação ORIGINAL (revogada) como se fosse vigente — você precisa saber o que está em vigor."},
+
+{tema:"Ingresso", artigo:"Art. 10 a 13", tipo:"CE",
+ enunciado:"O ingresso no Quadro de Oficiais de Saúde (QOS) ocorre mediante: Concurso público de provas e/ou provas e títulos, com aprovação em exames médico, físico e psicotécnico.",
+ correta:true,
+ explicacao:"Art. 13: ingresso no QOS via concurso público de provas e/ou provas e títulos, com aprovação nos exames médico, físico e psicotécnico.",
+ macete:"QOS (Saúde) = concurso próprio + estágio mínimo de 90 dias antes da nomeação a 1º Tenente (médico, dentista, veterinário, psicólogo)."},
+
+{tema:"Ingresso", artigo:"Art. 15", tipo:"CE",
+ enunciado:"As vagas para ingresso na graduação de 3º Sargento são destinadas em 50% para preenchimento mediante concurso público.",
+ correta:true,
+ explicacao:"Certo, conforme art. 15, IV (redação da Lei 7.855/2003).",
+ macete:"Decore o número '50%' associado a 3º Sargento — é um dos poucos percentuais de vagas citados na lei."},
+
+// ---------- HIERARQUIA ----------
+{tema:"Hierarquia", artigo:"Art. 17", tipo:"CE",
+ enunciado:"A hierarquia e a disciplina são as bases institucionais da Polícia Militar, sendo que a autoridade e a responsabilidade crescem com o grau hierárquico.",
+ correta:true,
+ explicacao:"Certo — texto literal do art. 17, caput.",
+ macete:"Frase-chave: 'autoridade e responsabilidade CRESCEM com o grau hierárquico' — relação diretamente proporcional, não inversa."},
+
+{tema:"Hierarquia", artigo:"Art. 18", tipo:"CE",
+ enunciado:"Círculos hierárquicos são âmbitos de convivência entre militares de categorias diferentes, destinados a estimular a hierarquia rígida sem qualquer espírito de camaradagem.",
+ correta:false,
+ explicacao:"Errado. Os círculos reúnem militares da MESMA categoria, com finalidade de desenvolver espírito de camaradagem em ambiente de estima e confiança.",
+ macete:"Círculo hierárquico = MESMA categoria + camaradagem + respeito mútuo. Qualquer alternativa que fale em 'categorias diferentes' ou negue camaradagem está errada."},
+
+{tema:"Hierarquia", artigo:"Art. 19", tipo:"CE",
+ enunciado:"De acordo com o art. 19, o Círculo de Oficiais Superiores é composto por: Coronel, Capitão e Major.",
+ correta:false,
+ explicacao:"Oficiais Superiores: Coronel, Tenente-Coronel e Major. Capitão é Oficial Intermediário; 1º e 2º Tenente são Oficiais Subalternos.",
+ macete:"Memorize a escala descendente: SUPERIORES (Cel, Ten-Cel, Maj) → INTERMEDIÁRIOS (Cap) → SUBALTERNOS (1º e 2º Ten). 'O Capitão fica no meio, sempre sozinho'."},
+
+{tema:"Hierarquia", artigo:"Art. 19, §1º e §2º", tipo:"CE",
+ enunciado:"Posto é o grau hierárquico do oficial, conferido por decreto do Governador e confirmado em Carta Patente; graduação é o grau hierárquico da praça, conferido por ato do Comandante-Geral.",
+ correta:true,
+ explicacao:"Certo — distinção literal dos §§1º e 2º do art. 19.",
+ macete:"POSTO = OFICIAL = Governador (decreto) + Carta Patente. GRADUAÇÃO = PRAÇA = Comandante-Geral (ato). 'P' de Posto com 'P' de Patente e Presidente do Estado (Governador)."},
+
+{tema:"Hierarquia", artigo:"Art. 19, §3º", tipo:"CE",
+ enunciado:"Aspirantes-a-Oficial e Cadetes são denominados Praças Especiais.",
+ correta:true,
+ explicacao:"Certo, conforme art. 19, §3º.",
+ macete:"'Especiais' = Aspirante + Cadete (os dois que estão 'entre' praça e oficial)."},
+
+{tema:"Hierarquia", artigo:"Art. 21", tipo:"CE",
+ enunciado:"A antiguidade no posto ou graduação NÃO é regulada por: Patrimônio pessoal declarado do militar.",
+ correta:true,
+ explicacao:"O art. 21 lista: data da promoção, precedência dos graus anteriores, data de ingresso e data de nascimento. Patrimônio não é critério de antiguidade.",
+ macete:"4 critérios do art. 21: promoção → precedência sucessiva → ingresso na corporação → nascimento (do mais específico ao mais genérico, como critérios de desempate em cascata)."},
+
+{tema:"Hierarquia", artigo:"Art. 21, §3º", tipo:"CE",
+ enunciado:"Em igualdade de posto ou graduação, os militares da ativa têm precedência sobre os da inatividade.",
+ correta:true,
+ explicacao:"Certo, art. 21, §3º.",
+ macete:"Ativa > Inatividade em igualdade de posto — regra simples e direta, raramente invertida em prova, mas confira sempre o sentido da frase."},
+
+{tema:"Hierarquia", artigo:"Art. 22", tipo:"CE",
+ enunciado:"Sobre a precedência entre praças especiais e demais praças, é correto afirmar que: Cadetes são hierarquicamente inferiores aos Subtenentes.",
+ correta:false,
+ explicacao:"Art. 22, III: Alunos do CFS têm precedência sobre os Cabos. As demais alternativas invertem as relações reais (Cadetes > Subtenentes; Aspirantes > demais praças; Alunos de CFC > Soldados).",
+ macete:"'Aluno' tem precedência sobre a graduação 'de baixo': aluno de Sargento > Cabo; aluno de Cabo > Soldado. E Cadete > Subtenente; Aspirante > todas as praças."},
+
+// ---------- CARGO E FUNÇÃO ----------
+{tema:"Cargo e Função", artigo:"Art. 26", tipo:"CE",
+ enunciado:"O provimento de cargo policial-militar será feito por ato de nomeação do Comandante-Geral da Polícia Militar.",
+ correta:false,
+ explicacao:"Errado. Conforme art. 26 (redação da Lei 7.855/2003), o provimento é por ato de nomeação do GOVERNADOR DO ESTADO.",
+ macete:"Troca clássica CEBRASPE: 'Governador' ↔ 'Comandante-Geral'. Sempre confira QUEM nomeia/promove/exclui — geralmente é o Governador para atos mais solenes, e o Comandante-Geral para atos administrativos internos."},
+
+{tema:"Cargo e Função", artigo:"Art. 27", tipo:"CE",
+ enunciado:"Consideram-se vagos os cargos policiais-militares cujos ocupantes tenham falecido, sido considerados extraviados ou considerados desertores.",
+ correta:true,
+ explicacao:"Certo — art. 27, parágrafo único, alíneas a, b, c.",
+ macete:"3 hipóteses de cargo vago por 'saída do ocupante': falecimento, extravio, deserção — guarde como 'F-E-D'."},
+
+{tema:"Cargo e Função", artigo:"Art. 31", tipo:"CE",
+ enunciado:"O Comandante-Geral da Polícia Militar será nomeado pelo Governador do Estado, escolhido entre Oficiais da ativa do último posto do Quadro de Combatentes.",
+ correta:true,
+ explicacao:"Certo, art. 31.",
+ macete:"Comandante-Geral = Governador nomeia + último posto (Coronel) + Quadro de Combatentes."},
+
+{tema:"Cargo e Função", artigo:"Art. 32", tipo:"CE",
+ enunciado:"O cargo de Chefe do Estado-Maior, exercido cumulativamente com funções de Subcomandante, pode ser ocupado por Tenente-Coronel da reserva remunerada.",
+ correta:false,
+ explicacao:"Errado. O art. 32 exige que seja exercido obrigatoriamente por CORONÉIS QOPM DA ATIVA da Corporação, nomeados pelo Governador.",
+ macete:"Chefe do Estado-Maior/Subcomandante = Coronel QOPM da ATIVA, nomeado pelo Governador. 'Reserva' já elimina a alternativa de cara."},
+
+{tema:"Cargo e Função", artigo:"Art. 33", tipo:"CE",
+ enunciado:"Em relação ao cargo, o militar que desempenha as obrigações do cargo sem satisfazer os requisitos de grau hierárquico, quadro e especialização está em situação: Interino.",
+ correta:true,
+ explicacao:"Art. 33, II: situação INTERINA é a do militar que exerce as obrigações do cargo SEM satisfazer aos requisitos do inciso I (efetivo).",
+ macete:"EFETIVO = satisfaz todos os requisitos. INTERINO = não satisfaz, mas exerce mesmo assim ('Interino = Incompleto')."},
+
+// ---------- VALORES, OBRIGAÇÕES E ÉTICA ----------
+{tema:"Ética e Obrigações", artigo:"Art. 39", tipo:"CE",
+ enunciado:"São manifestações essenciais do valor policial militar o civismo, a fé na elevada missão da PM, o espírito de corpo e o aprimoramento técnico-profissional, entre outros.",
+ correta:true,
+ explicacao:"Certo — síntese dos incisos do art. 39.",
+ macete:"6 manifestações do valor PM (art. 39): sentimento de servir, civismo/tradições, fé na missão, espírito de corpo, amor à profissão, aprimoramento técnico."},
+
+{tema:"Ética e Obrigações", artigo:"Art. 40", tipo:"CE",
+ enunciado:"Entre os preceitos da ética policial-militar está garantir assistência moral e material ao seu lar e conduzir-se como chefe de família modelar.",
+ correta:true,
+ explicacao:"Certo — art. 40, XIV.",
+ macete:"O art. 40 é extenso (18 incisos): foque nos mais 'humanos' e cobráveis — verdade/responsabilidade (I), respeito à dignidade humana (III), discrição (VIII), vida familiar (XIV), conduta mesmo na inatividade (XV) e proibição de usar o posto para vantagens pessoais (XVI)."},
+
+{tema:"Ética e Obrigações", artigo:"Art. 40, XVI", tipo:"CE",
+ enunciado:"É permitido ao policial-militar usar o posto ou graduação para obter facilidades pessoais, desde que não envolva valores financeiros.",
+ correta:false,
+ explicacao:"Errado. O art. 40, XVI determina que o militar deve ABSTER-SE de usar o posto/graduação para obter facilidades pessoais de qualquer natureza ou encaminhar negócios próprios/de terceiros — sem exceções por valor.",
+ macete:"'De qualquer natureza' = sem exceções. Toda vez que a questão criar uma 'exceção' que a lei não prevê, marque ERRADO."},
+
+{tema:"Ética e Obrigações", artigo:"Art. 41", tipo:"CE",
+ enunciado:"É vedado ao policial-militar da ativa comerciar ou participar da administração de sociedade, exceto como acionista ou quotista em sociedade anônima ou de responsabilidade limitada.",
+ correta:true,
+ explicacao:"Certo — art. 41, caput.",
+ macete:"PM pode ser SÓCIO INVESTIDOR (acionista/quotista) mas não pode ADMINISTRAR/GERENCIAR negócio nem comerciar diretamente."},
+
+{tema:"Ética e Obrigações", artigo:"Art. 41, §3º", tipo:"CE",
+ enunciado:"Aos integrantes do Quadro de Saúde é permitido o exercício de atividade técnico-profissional no meio civil, desde que não prejudique o serviço.",
+ correta:true,
+ explicacao:"Certo — art. 41, §3º.",
+ macete:"Exceção específica para o Quadro de SAÚDE (médicos, dentistas etc.): podem atuar no meio civil, condicionado a não prejudicar o serviço."},
+
+{tema:"Ética e Obrigações", artigo:"Art. 43", tipo:"CE",
+ enunciado:"NÃO é um dos deveres policiais-militares listados no art. 43: Dedicação integral ao serviço e fidelidade à instituição.",
+ correta:false,
+ explicacao:"O art. 43 não prevê filiação partidária — pelo contrário, o art. 64, §2º PROÍBE filiação a partido enquanto em atividade.",
+ macete:"Atenção: deveres do art. 43 (positivos) × proibições do art. 64 (negativos, como filiação partidária e greve). A banca mistura os dois artigos para confundir."},
+
+// ---------- COMPROMISSO ----------
+{tema:"Compromisso", artigo:"Art. 44 a 47", tipo:"CE",
+ enunciado:"Todo cidadão, após ingressar na Polícia Militar, prestará compromisso de honra, no qual firmará sua aceitação consciente das obrigações e deveres policiais-militares.",
+ correta:true,
+ explicacao:"Certo — art. 44.",
+ macete:"3 compromissos diferentes: (1) Praça/geral (art. 45) — 'Ao ingressar...'; (2) Aspirante-a-Oficial (art. 46) — 'Ao ser declarado Aspirante...'; (3) Primeiro posto de oficial (art. 47) — 'Perante a Bandeira do Brasil...'. Cada um tem redação própria — atenção a trocas de frases entre eles."},
+
+{tema:"Compromisso", artigo:"Art. 45", tipo:"CE",
+ enunciado:"O compromisso previsto no art. 45 terá caráter solene e será prestado na presença da tropa, tão logo o militar tenha adquirido grau de conhecimento compatível com o entendimento de seus deveres.",
+ correta:true,
+ explicacao:"Certo — art. 45, caput.",
+ macete:"Palavras-chave do compromisso geral: 'na presença da tropa' + 'caráter solene' + condicionado ao grau de conhecimento adquirido."},
+
+// ---------- COMANDO E SUBORDINAÇÃO ----------
+{tema:"Comando", artigo:"Art. 48", tipo:"CE",
+ enunciado:"O Comando é a soma de autoridade, deveres e responsabilidades de que o militar é investido legalmente, vinculado ao grau hierárquico e constituindo prerrogativa pessoal.",
+ correta:false,
+ explicacao:"Errado. O art. 48 diz que o Comando constitui prerrogativa IMPESSOAL (não pessoal), exercida quando se conduz homens ou se dirige Organização Policial-Militar.",
+ macete:"Comando é IMPESSOAL — pertence ao CARGO/POSTO, não à pessoa. Troca 'impessoal' por 'pessoal' é pegadinha típica."},
+
+{tema:"Comando", artigo:"Art. 49", tipo:"CE",
+ enunciado:"A subordinação afeta a dignidade pessoal do militar, pois decorre da estrutura hierárquica da Polícia Militar.",
+ correta:false,
+ explicacao:"Errado. O art. 49 afirma que a subordinação NÃO afeta, de modo algum, a dignidade pessoal do militar.",
+ macete:"Subordinação ≠ desrespeito à dignidade. A relação hierárquica é funcional, não pessoal — 'subordinação não fere dignidade'."},
+
+{tema:"Comando", artigo:"Art. 51 e 52", tipo:"CE",
+ enunciado:"Segundo o Estatuto, cabos e soldados são essencialmente: Elementos de execução.",
+ correta:true,
+ explicacao:"Art. 52: cabos e soldados são essencialmente elementos de EXECUÇÃO.",
+ macete:"Pirâmide funcional: Oficiais = comando/direção/chefia (art. 50); Subtenentes/Sargentos = auxiliam e complementam (art. 51); Cabos/Soldados = execução (art. 52)."},
+
+// ---------- VIOLAÇÃO DE DEVERES / CRIMES / DISCIPLINA ----------
+{tema:"Violação de Deveres", artigo:"Art. 55, §1º", tipo:"CE",
+ enunciado:"A violação dos preceitos da ética policial-militar é tão mais grave quanto mais elevado for o grau hierárquico de quem a cometer.",
+ correta:true,
+ explicacao:"Certo — art. 55, §1º.",
+ macete:"'Quanto maior a patente, maior a gravidade da falta ética' — princípio da maior responsabilidade dos graus superiores."},
+
+{tema:"Violação de Deveres", artigo:"Art. 55, §2º", tipo:"CE",
+ enunciado:"No concurso de crime militar e transgressão disciplinar pelo mesmo fato, aplicam-se cumulativamente as duas penalidades.",
+ correta:false,
+ explicacao:"Errado. O art. 55, §2º determina que, no concurso de crime militar e transgressão disciplinar, será aplicada SOMENTE a pena relativa ao crime (não há cumulação).",
+ macete:"Concurso crime x transgressão = prevalece SÓ a pena do CRIME (não soma, não cumula com a disciplinar)."},
+
+{tema:"Violação de Deveres", artigo:"Art. 57, §1º", tipo:"CE",
+ enunciado:"São competentes para determinar o imediato afastamento do cargo do militar incompatível, EXCETO: O Governador do Estado.",
+ correta:false,
+ explicacao:"Art. 57, §1º: competentes são Governador, Gerente de Segurança Pública e Comandante-Geral. O Presidente da Assembleia não consta.",
+ macete:"3 autoridades do art. 57, §1º: Governador → Gerente de Segurança Pública → Comandante-Geral (ordem hierárquica decrescente de poder estadual)."},
+
+{tema:"Crimes e Transgressões", artigo:"Art. 58", tipo:"CE",
+ enunciado:"Enquanto o Estado do Maranhão não dispuser de Tribunal Militar, a Auditoria da Justiça Militar Estadual processa e julga os militares estaduais em crimes militares, cabendo ao Tribunal de Justiça julgar em segunda instância.",
+ correta:true,
+ explicacao:"Certo — art. 58, caput.",
+ macete:"1ª instância = Auditoria da Justiça Militar Estadual; 2ª instância = Tribunal de Justiça do Estado (na ausência de Tribunal Militar próprio)."},
+
+{tema:"Transgressões Disciplinares", artigo:"Art. 59, §1º", tipo:"CE",
+ enunciado:"As penas disciplinares de detenção ou prisão não podem ultrapassar trinta dias.",
+ correta:true,
+ explicacao:"Certo — art. 59, §1º.",
+ macete:"Limite máximo de detenção/prisão disciplinar = 30 DIAS. Número clássico de prova."},
+
+{tema:"Conselhos", artigo:"Art. 60", tipo:"CE",
+ enunciado:"O oficial presumivelmente incapaz de permanecer na ativa será submetido a Conselho de Disciplina.",
+ correta:false,
+ explicacao:"Errado. Oficiais vão a CONSELHO DE JUSTIFICAÇÃO (art. 60). O Conselho de DISCIPLINA é para Aspirante-a-Oficial e praças com estabilidade (art. 61).",
+ macete:"OFICIAL → Conselho de JUSTIFICAÇÃO. ASPIRANTE/PRAÇA (com estabilidade) → Conselho de DISCIPLINA. 'J' de oficial mais 'graduado/Justiça', 'D' de praça menos graduada/'Disciplina'."},
+
+{tema:"Conselhos", artigo:"Art. 61, §2º", tipo:"CE",
+ enunciado:"Compete ao Conselho Superior de Polícia julgar, em última instância, os processos oriundos dos conselhos de Disciplina convocados no âmbito da Corporação.",
+ correta:true,
+ explicacao:"Certo — art. 61, §2º (redação da Lei 7.855/2003).",
+ macete:"Conselho de Disciplina → recurso final → Conselho Superior de Polícia. Conselho de Justificação → recurso final → Tribunal de Justiça do Estado (art. 60, §2º)."},
+
+// ---------- DIREITOS ----------
+{tema:"Direitos", artigo:"Art. 62, II", tipo:"CE",
+ enunciado:"Os proventos da inatividade são calculados com base no soldo integral do posto/graduação se o militar contar com 30 anos de contribuição (sexo masculino) ou 25 anos (sexo feminino).",
+ correta:true,
+ explicacao:"Certo — art. 62, II, redação da Lei 8.080/2004.",
+ macete:"30 anos (homem) / 25 anos (mulher) — esse par numérico se repete em VÁRIOS artigos (62, 119, 120). Memorize uma vez e aplique sempre."},
+
+{tema:"Direitos", artigo:"Art. 62, III, a", tipo:"CE",
+ enunciado:"A estabilidade é garantida às praças com 10 anos de efetivo serviço.",
+ correta:true,
+ explicacao:"Certo — art. 62, III, 'a' (redação da Lei 8.080/2004).",
+ macete:"Estabilidade da praça = 10 anos de efetivo serviço. Esse '10 anos' também aparece no art. 95 (licença para interesse particular) e art. 64 (elegibilidade) — não confunda os contextos."},
+
+{tema:"Direitos", artigo:"Art. 62, III", tipo:"CE",
+ enunciado:"NÃO é direito do policial-militar previsto no art. 62, III: Porte de arma irrestrito mesmo para oficial reformado por alienação mental.",
+ correta:true,
+ explicacao:"Art. 62, III, 'l': o porte de arma para oficial é vedado quando reformado por alienação mental, condenado por crime contra a Segurança Nacional, ou em caso de atividade que desaconselhe o porte.",
+ macete:"Porte de arma do OFICIAL tem 3 exceções: alienação mental, crime contra Segurança Nacional, atividade que desaconselhe. Praças têm porte 'com restrições do Comando-Geral' (alínea m)."},
+
+{tema:"Direitos - Recursos", artigo:"Art. 63, §1º", tipo:"CE",
+ enunciado:"O direito de recorrer na esfera administrativa prescreve em 30 dias quando se tratar de: Concessão de férias.",
+ correta:false,
+ explicacao:"Art. 63, §1º, I: 30 dias para recorrer de composição de Quadro de Acesso para promoção; demais casos, 120 dias (inciso II).",
+ macete:"30 dias = Quadro de Acesso (promoção). 120 dias = demais casos (regra geral). '30 é exceção, 120 é regra'."},
+
+{tema:"Direitos - Político", artigo:"Art. 64", tipo:"CE",
+ enunciado:"O militar com menos de 10 anos de serviço que for candidato a cargo eletivo deverá afastar-se da atividade; com mais de 10 anos, será agregado e, se eleito, passará para a inatividade na diplomação.",
+ correta:true,
+ explicacao:"Certo — síntese do art. 64, §1º, I e II.",
+ macete:"Marco temporal = 10 anos de serviço. < 10 anos = AFASTA-SE da atividade. > 10 anos = AGREGADO (continua vinculado), e se eleito → inatividade na diplomação."},
+
+{tema:"Direitos - Político", artigo:"Art. 64, §2º e §3º", tipo:"CE",
+ enunciado:"Ao militar, enquanto em atividade, é proibida a sindicalização e a greve, mas é permitida a filiação a partido político.",
+ correta:false,
+ explicacao:"Errado. O §2º proíbe a filiação a partido político ENQUANTO EM ATIVIDADE, além da proibição de sindicalização e greve do §3º.",
+ macete:"3 proibições do militar da ATIVA: filiação partidária + sindicalização + greve. Reflete o art. 142, §3º, IV e V da CF/88."},
+
+// ---------- REMUNERAÇÃO ----------
+{tema:"Remuneração", artigo:"Art. 65 e 66", tipo:"CE",
+ enunciado:"A remuneração dos policiais-militares na INATIVIDADE é constituída de: Proventos, compreendendo soldo, gratificações, indenizações e outras vantagens incorporáveis.",
+ correta:true,
+ explicacao:"Art. 66: remuneração da inatividade = PROVENTOS (soldo + gratificações + indenizações + outras vantagens incorporáveis). A ativa (art. 65) é soldo + gratificação + indenizações, sem o termo 'proventos'.",
+ macete:"ATIVA = 'remuneração' (soldo+gratificação+indenizações). INATIVA = 'proventos' (mesmos itens + vantagens incorporáveis). A palavra 'proventos' é exclusiva da inatividade."},
+
+{tema:"Remuneração - Gratificações", artigo:"Art. 67", tipo:"CE",
+ enunciado:"São gratificações deferidas aos policiais-militares, segundo o art. 67, EXCETO: Gratificação de Tempo de Serviço.",
+ correta:false,
+ explicacao:"'Risco de Vida' é uma INDENIZAÇÃO (art. 68, IV), não uma gratificação (art. 67). As gratificações do art. 67 são: Tempo de Serviço, Serviço Ativo, Localidade Especial, Habilitação PM, Especial Militar.",
+ macete:"GRATIFICAÇÕES (art.67): Tempo de Serviço, Serviço Ativo, Localidade Especial, Habilitação, Especial Militar (GEM). INDENIZAÇÕES (art.68): Representação, Compensações Orgânicas, Moradia, Risco de Vida, Etapa de Alimentação. Separe as duas listas!"},
+
+{tema:"Remuneração - GEM", artigo:"Art. 67, parágrafo único", tipo:"CE",
+ enunciado:"Aos Cadetes é paga a Gratificação Especial Militar (GEM), sendo ao Cadete do 1º ano GEM de Soldado, do 2º ano GEM de Cabo, e do 3º ano GEM de Terceiro-Sargento.",
+ correta:true,
+ explicacao:"Certo — art. 67, parágrafo único (redação da Lei 7.855/2003).",
+ macete:"Progressão do Cadete na GEM: 1º ano=Soldado, 2º ano=Cabo, 3º ano=3º Sargento — segue a ordem crescente de graduação a cada ano."},
+
+{tema:"Remuneração - Indenizações", artigo:"Art. 68", tipo:"CE",
+ enunciado:"Constituem indenizações dos policiais-militares, segundo o art. 68: Representação, Compensações Orgânicas, Moradia, Risco de Vida e Etapa de Alimentação.",
+ correta:true,
+ explicacao:"Art. 68, I a V: Representação, Compensações Orgânicas, Moradia, Risco de Vida, Etapa de Alimentação. As outras alternativas misturam itens dos arts. 67 e 69.",
+ macete:"Mnemônico das indenizações: 'R-C-M-R-E' (Representação, Compensação orgânica, Moradia, Risco de vida, Etapa de alimentação)."},
+
+{tema:"Remuneração - Outros direitos", artigo:"Art. 69", tipo:"CE",
+ enunciado:"Além das indenizações e gratificações, os policiais-militares têm direito a diárias, ajuda de custo, ajuda de curso, salário-família, fardamento e adicional de férias, sendo que o fardamento é direito de todos sem exceção.",
+ correta:false,
+ explicacao:"Errado. O parágrafo único do art. 69 restringe o direito a fardamento (inciso V) apenas a Cadetes, Cabos e Soldados — não é 'de todos sem exceção'.",
+ macete:"Fardamento (custeado pelo Estado) = só Cadetes, Cabos e Soldados. Oficiais e Sargentos/Subtenentes geralmente custeiam o próprio fardamento."},
+
+{tema:"Remuneração - Garantias", artigo:"Art. 71", tipo:"CE",
+ enunciado:"Os vencimentos dos militares são irredutíveis e não estão sujeitos a penhora, sequestro ou arresto, exceto nos casos previstos em lei.",
+ correta:true,
+ explicacao:"Certo — art. 71, refletindo a regra constitucional de irredutibilidade de vencimentos e impenhorabilidade de salários (com exceções legais, como pensão alimentícia).",
+ macete:"'Irredutível' + 'impenhorável, salvo exceções legais' — pensão alimentícia é a exceção clássica em qualquer matéria de remuneração."},
+
+{tema:"Remuneração - Soldo", artigo:"Art. 72", tipo:"CE",
+ enunciado:"O valor do soldo é igual para o militar da ativa e da inatividade, do mesmo grau hierárquico, ressalvados os casos previstos no Estatuto.",
+ correta:true,
+ explicacao:"Certo — art. 72.",
+ macete:"Regra: soldo igual entre ativa/inatividade do mesmo grau — mas SEMPRE existe ressalva ('ressalvados os casos previstos'), então não generalize como absoluto."},
+
+{tema:"Remuneração - Adicional", artigo:"Art. 75", tipo:"CE",
+ enunciado:"O adicional por tempo de serviço é devido à razão de 5% a cada cinco anos de efetivo serviço público estadual, incidente sobre o soldo, até o limite máximo de 35%.",
+ correta:true,
+ explicacao:"Certo — art. 75, caput (redação da Lei 7.356/1998, mantida pela Lei 8.559/2006).",
+ macete:"Adicional por tempo de serviço: 5% por quinquênio, TETO 35% (= 7 quinquênios = 35 anos de serviço). Conta: 5×7=35."},
+
+// ---------- PROMOÇÃO ----------
+{tema:"Promoção", artigo:"Art. 77", tipo:"CE",
+ enunciado:"O acesso à hierarquia militar é seletivo, gradual e sucessivo, feito mediante promoções, de modo a obter-se fluxo regular e equilibrado.",
+ correta:true,
+ explicacao:"Certo — art. 77, caput.",
+ macete:"3 adjetivos da promoção: SELETIVA + GRADUAL + SUCESSIVA — não há 'salto' de posto/graduação."},
+
+{tema:"Promoção", artigo:"Art. 78", tipo:"CE",
+ enunciado:"As promoções de OFICIAIS são efetuadas por ato: Do Gerente de Estado de Segurança Pública.",
+ correta:false,
+ explicacao:"Art. 78: promoções de Oficiais = ato do Governador do Estado; promoções de Praças = ato do Gerente de Estado de Segurança Pública.",
+ macete:"OFICIAIS promovidos pelo GOVERNADOR. PRAÇAS promovidas pelo GERENTE DE SEGURANÇA PÚBLICA. 'O' de Oficial com 'O' de gOvernador (ok, forçado, mas funciona); Praças com Gerente."},
+
+{tema:"Promoção", artigo:"Art. 78, §1º a §3º", tipo:"CE",
+ enunciado:"As promoções ocorridas em desacordo com a legislação vigente são nulas de pleno direito, podendo ocorrer promoção em ressarcimento de preterição em casos extraordinários.",
+ correta:true,
+ explicacao:"Certo — art. 78, §§1º e 3º.",
+ macete:"'Ressarcimento de preterição' = corrigir injustiça de quem deveria ter sido promovido antes e não foi; recebe o número que teria na escala como se promovido na época devida (§2º)."},
+
+{tema:"Promoção", artigo:"Art. 78, §5º", tipo:"CE",
+ enunciado:"As promoções post-mortem ou no período em que o militar estiver na reserva ou reformado produzirão efeitos financeiros retroativos.",
+ correta:false,
+ explicacao:"Errado. O art. 78, §5º estabelece que essas promoções NÃO produzirão efeitos financeiros.",
+ macete:"Promoção post-mortem / reserva / reformado = honorífica, SEM efeito financeiro. Qualquer menção a 'efeitos financeiros' nessas situações está errada."},
+
+{tema:"Promoção", artigo:"Art. 79", tipo:"CE",
+ enunciado:"Não haverá promoção de policial-militar por ocasião de sua transferência para a reserva remunerada ou de sua reforma.",
+ correta:true,
+ explicacao:"Certo — art. 79.",
+ macete:"Princípio: a inatividade NÃO é 'usada' como pretexto para promoção de última hora — proíbe a chamada 'promoção na saída'."},
+
+// ---------- FÉRIAS ----------
+{tema:"Férias", artigo:"Art. 80", tipo:"CE",
+ enunciado:"O militar gozará por ano, obrigatoriamente, 30 dias consecutivos de férias remuneradas, somente adquirindo esse direito após os doze primeiros meses de efetivo exercício.",
+ correta:true,
+ explicacao:"Certo — art. 80, caput e §1º.",
+ macete:"30 dias consecutivos + carência de 12 meses de exercício efetivo antes do 1º gozo (igual à regra geral da CLT, mas aqui obrigatória)."},
+
+{tema:"Férias", artigo:"Art. 80, §5º", tipo:"CE",
+ enunciado:"Independentemente de solicitação, será pago ao militar, por ocasião das férias, um adicional correspondente a 1/3 da remuneração do período de férias.",
+ correta:true,
+ explicacao:"Certo — art. 80, §5º (terço constitucional de férias).",
+ macete:"Terço de férias = 1/3 — automático, 'independente de solicitação'. É o mesmo princípio do art. 7º, XVII, da CF."},
+
+{tema:"Férias", artigo:"Art. 82", tipo:"CE",
+ enunciado:"É permitida a acumulação de férias sem limite de tempo, em caso de necessidade do serviço.",
+ correta:false,
+ explicacao:"Errado. O art. 82 limita a acumulação ao máximo de DOIS ANOS, mesmo em caso de imperiosa necessidade de serviço.",
+ macete:"Acumulação de férias = limite de 2 ANOS, mesmo havendo 'imperiosa necessidade' — a lei não permite acumulação ilimitada."},
+
+{tema:"Férias", artigo:"Art. 83", tipo:"CE",
+ enunciado:"O pagamento da remuneração das férias será efetuado no mês antecedente ao gozo das mesmas.",
+ correta:true,
+ explicacao:"Certo — art. 83, caput.",
+ macete:"Pagamento das férias = ANTES do gozo (mês antecedente) — não no mesmo mês nem depois."},
+
+{tema:"Afastamentos", artigo:"Art. 84", tipo:"CE",
+ enunciado:"Os prazos de afastamento total do serviço previstos no art. 84 são, respectivamente, para núpcias, luto, trânsito e instalação: 8 dias, 8 dias, até 30 dias, até 10 dias.",
+ correta:true,
+ explicacao:"Art. 84: Núpcias = 8 dias; Luto = 8 dias; Trânsito = até 30 dias; Instalação = até 10 dias.",
+ macete:"'8-8-30-10' — núpcias e luto são iguais (8 e 8), trânsito é o maior (30), instalação intermediário (10). Frase: 'casou, chorou (8 e 8), mudou (30), instalou (10)'."},
+
+{tema:"Afastamentos", artigo:"Art. 84, II", tipo:"CE",
+ enunciado:"O afastamento por luto de 8 dias se aplica em decorrência do falecimento de cônjuge, pais, filhos, irmãos, madrasta, padrasto e menor sob guarda ou tutela.",
+ correta:true,
+ explicacao:"Certo — rol do art. 84, II.",
+ macete:"Rol de parentesco para luto (8 dias): cônjuge/companheiro, pais, madrasta/padrasto, pais adotivos, filhos, menor sob guarda/tutela, irmãos. Tio/primo/avô NÃO entram nesse rol."},
+
+// ---------- SALÁRIO-FAMÍLIA ----------
+{tema:"Salário-Família", artigo:"Art. 86", tipo:"CE",
+ enunciado:"Salário-família é o auxílio pecuniário concedido pelo Estado ao militar ativo, em disponibilidade e ao inativo, como contribuição para despesas de manutenção de dependentes.",
+ correta:true,
+ explicacao:"Certo — art. 86.",
+ macete:"Salário-família vale para ATIVO + DISPONIBILIDADE + INATIVO — não é restrito ao militar da ativa."},
+
+{tema:"Salário-Família", artigo:"Art. 87, II", tipo:"CE",
+ enunciado:"Consideram-se dependentes para fins de salário-família os filhos, inclusive enteados e adotivos, até 21 anos, ou até 24 anos se estudante, ou de qualquer idade se inválido.",
+ correta:true,
+ explicacao:"Certo — art. 87, II.",
+ macete:"Idades-limite de dependente filho: 21 anos (regra geral) / 24 anos (se estudante) / sem limite (se inválido). '21-24-inválido sem limite'."},
+
+{tema:"Salário-Família", artigo:"Art. 88", tipo:"CE",
+ enunciado:"Não se configura dependência econômica quando o beneficiário perceber rendimento de qualquer fonte, inclusive pensão, em valor igual ou superior ao salário mínimo.",
+ correta:true,
+ explicacao:"Certo — art. 88.",
+ macete:"Critério de corte = salário mínimo. Renda ≥ salário mínimo → não é mais 'dependente econômico'."},
+
+{tema:"Salário-Família", artigo:"Art. 89", tipo:"CE",
+ enunciado:"Quando pai e mãe forem ambos policiais-militares e viverem separados, o salário-família será pago apenas a um deles, a critério da Corporação.",
+ correta:false,
+ explicacao:"Errado. O art. 89 diz que, quando separados, o salário será pago A UM E A OUTRO, de acordo com a distribuição dos dependentes (não é pago só a um, e não é 'a critério da Corporação').",
+ macete:"Pais PM JUNTOS → paga-se a UM. Pais PM SEPARADOS → paga-se a CADA UM, proporcionalmente aos dependentes que cada um sustenta."},
+
+// ---------- LICENÇAS ----------
+{tema:"Licenças", artigo:"Art. 92, §1º", tipo:"CE",
+ enunciado:"São tipos de licença previstos no art. 92, EXCETO: Licença-prêmio.",
+ correta:false,
+ explicacao:"O art. 92, §1º lista: licença-prêmio, para tratamento de saúde em pessoa da família, para tratar de interesse particular, para tratamento de saúde, à gestante, paternidade. 'Licença para casamento' não existe como categoria — núpcias é afastamento (art. 84), não licença.",
+ macete:"6 licenças do art. 92: PRÊMIO, saúde de família, interesse particular, saúde própria, gestante, paternidade. Núpcias/luto são AFASTAMENTOS (art. 84), categoria diferente!"},
+
+{tema:"Licenças", artigo:"Art. 93", tipo:"CE",
+ enunciado:"A licença-prêmio tem duração de 3 meses, gozada de uma só vez, a cada quinquênio de serviço prestado, quando solicitado pelo interessado, sem prejuízo da carreira e remuneração.",
+ correta:true,
+ explicacao:"Certo — art. 93, caput e §1º.",
+ macete:"Licença-prêmio: 3 MESES por QUINQUÊNIO, de uma vez só, sem prejuízo de carreira/remuneração. 'Prêmio' = sem perdas."},
+
+{tema:"Licenças", artigo:"Art. 94", tipo:"CE",
+ enunciado:"A licença para tratamento de saúde em pessoa da família não pode exceder 6 meses, sendo concedida com vencimentos integrais até 3 meses e, se superior, com desconto de um terço.",
+ correta:true,
+ explicacao:"Certo — art. 94, parágrafo único (redação da Lei 8.362/2005).",
+ macete:"Licença saúde de família: limite total 6 meses; primeiros 3 meses = vencimentos integrais; excedente = desconto de 1/3. '6 total, 3 sem desconto, resto com desconto de 1/3'."},
+
+{tema:"Licenças", artigo:"Art. 95", tipo:"CE",
+ enunciado:"A licença para tratar de interesse particular é concedida ao militar com mais de 10 anos de efetivo serviço, sem prejuízo de remuneração, podendo durar até 2 anos.",
+ correta:false,
+ explicacao:"Errado. O art. 95 estabelece que essa licença é concedida SEMPRE COM PREJUÍZO da remuneração e do tempo de serviço (não 'sem prejuízo'), com limite de até 2 anos.",
+ macete:"Licença para interesse particular = 10 anos de serviço + COM PREJUÍZO de remuneração e tempo de serviço + máximo 2 anos. Compare com licença-prêmio (SEM prejuízo) — são opostas nesse ponto."},
+
+{tema:"Licenças", artigo:"Art. 97", tipo:"CE",
+ enunciado:"A licença à gestante será concedida sem prejuízo da remuneração e terá duração de 120 dias.",
+ correta:true,
+ explicacao:"Certo — art. 97.",
+ macete:"Licença-gestante: 120 dias, SEM prejuízo de remuneração — mesmo prazo da licença-maternidade prevista na CF/CLT."},
+
+{tema:"Licenças", artigo:"Art. 98", tipo:"CE",
+ enunciado:"A licença-prêmio, a licença-paternidade e a licença para tratar de interesse particular podem ser interrompidas, EXCETO em caso de: Solicitação verbal informal de superior hierárquico.",
+ correta:true,
+ explicacao:"O art. 98 lista hipóteses formais de interrupção (mobilização/estado de defesa/sítio, cumprimento de sentença, punição disciplinar, denúncia/pronúncia/indiciamento). 'Solicitação verbal informal' não está prevista.",
+ macete:"As interrupções do art. 98 são sempre situações FORMAIS e GRAVES (guerra, prisão, punição, processo penal) — nunca 'informal' ou 'a critério verbal'."},
+
+// ---------- PRERROGATIVAS / UNIFORME ----------
+{tema:"Prerrogativas", artigo:"Art. 99", tipo:"CE",
+ enunciado:"As prerrogativas dos policiais-militares incluem o cumprimento de pena privativa de liberdade somente em Organização Policial-Militar cujo comandante tenha precedência hierárquica sobre o apenado, e julgamento em foro especial nos crimes militares.",
+ correta:true,
+ explicacao:"Certo — art. 99, III e IV.",
+ macete:"Prerrogativa de prisão: só em OPM cujo comandante seja hierarquicamente SUPERIOR ao preso — nunca em local comandado por subordinado seu."},
+
+{tema:"Prerrogativas", artigo:"Art. 100", tipo:"CE",
+ enunciado:"O policial-militar só poderá ser preso por autoridade policial em caso de flagrante delito, devendo ser apresentado imediatamente à autoridade militar mais próxima.",
+ correta:true,
+ explicacao:"Certo — art. 100, caput e §1º.",
+ macete:"Prisão de PM por autoridade civil = SÓ EM FLAGRANTE, com apresentação imediata à autoridade MILITAR mais próxima (não fica detido na delegacia além do necessário para lavratura)."},
+
+{tema:"Prerrogativas", artigo:"Art. 101", tipo:"CE",
+ enunciado:"Os servidores militares da ativa são dispensados do corpo de jurados da justiça comum e do serviço da Justiça Eleitoral.",
+ correta:true,
+ explicacao:"Certo — art. 101.",
+ macete:"PM da ativa = dispensado de JÚRI + JUSTIÇA ELEITORAL (mesário, etc.) — não significa que não vote (art. 64 garante alistamento)."},
+
+{tema:"Uniformes", artigo:"Art. 102", tipo:"CE",
+ enunciado:"Constitui crime o desrespeito aos uniformes, distintivos, insígnias e emblemas militares, bem como o uso por quem não tem direito.",
+ correta:true,
+ explicacao:"Certo — art. 102, parágrafo único.",
+ macete:"Uso indevido de uniforme/distintivo/insígnia = CRIME (não é mera transgressão disciplinar)."},
+
+{tema:"Uniformes", artigo:"Art. 103, §1º", tipo:"CE",
+ enunciado:"É proibido ao policial-militar o uso de uniforme, EXCETO: Em reuniões de caráter político-partidário.",
+ correta:false,
+ explicacao:"Art. 103, §1º, II permite o uso na inatividade para solenidades militares (e cerimônias cívicas/atos sociais solenes), quando autorizado — sendo a exceção à proibição geral.",
+ macete:"Regra geral: PROIBIDO uso de uniforme em política, propaganda, exterior sem missão. EXCEÇÃO: inatividade + autorização + solenidade militar/cívica/social."},
+
+// ---------- AGREGAÇÃO ----------
+{tema:"Agregação", artigo:"Art. 106", tipo:"CE",
+ enunciado:"Agregação é a situação na qual o policial-militar da ativa deixa de ocupar vaga na escala hierárquica do seu quadro, nela permanecendo sem número.",
+ correta:true,
+ explicacao:"Certo — art. 106, caput.",
+ macete:"Agregado = 'fora da escala numérica, mas ainda no quadro' — não ocupa vaga, mas continua vinculado."},
+
+{tema:"Agregação", artigo:"Art. 106, §1º, c", tipo:"CE",
+ enunciado:"O militar deve ser agregado quando ultrapassar 1 ano contínuo de licença para tratamento da própria saúde.",
+ correta:true,
+ explicacao:"Certo — art. 106, §1º, 'c'.",
+ macete:"Prazo-gatilho de agregação por saúde própria: 1 ANO contínuo. Para saúde de família e interesse particular: 6 MESES (alíneas 'd' e 'e')."},
+
+{tema:"Agregação", artigo:"Art. 106, §1º, d e e", tipo:"CE",
+ enunciado:"O militar deve ser agregado quando ultrapassar 6 meses de licença para tratamento de saúde em pessoa da família ou 6 meses de licença para tratar de interesse particular.",
+ correta:true,
+ explicacao:"Certo — art. 106, §1º, alíneas 'd' e 'e'.",
+ macete:"6 meses = saúde de família OU interesse particular → agregação. 1 ano = saúde própria → agregação. Números diferentes, não troque!"},
+
+{tema:"Agregação", artigo:"Art. 106, §1º, m", tipo:"CE",
+ enunciado:"O militar deve ser agregado ao se candidatar a cargo eletivo, independentemente do tempo de serviço.",
+ correta:false,
+ explicacao:"Errado. A agregação por candidatura (art. 106, §1º, 'm') exige que o militar conte com MAIS DE 10 ANOS de serviço (combinar com art. 64, §1º, II).",
+ macete:"Candidatura a cargo eletivo: < 10 anos → AFASTA-SE (não agrega); > 10 anos → AGREGA-SE. O '10 anos' é o divisor."},
+
+{tema:"Agregação", artigo:"Art. 106, §8º", tipo:"CE",
+ enunciado:"O militar agregado pode ser promovido normalmente enquanto durar sua agregação.",
+ correta:false,
+ explicacao:"Errado. O art. 106, §8º proíbe a promoção do militar enquanto durar a agregação.",
+ macete:"Agregado = SEM número na escala = NÃO PODE SER PROMOVIDO enquanto agregado (faz sentido: não tem 'posição' para subir)."},
+
+// ---------- REVERSÃO / EXCEDENTE ----------
+{tema:"Reversão", artigo:"Art. 108", tipo:"CE",
+ enunciado:"Reversão é o ato pelo qual o militar agregado retorna ao respectivo quadro tão logo cesse o motivo que determinou sua agregação, voltando a ocupar o lugar que lhe couber na escala numérica.",
+ correta:true,
+ explicacao:"Certo — art. 108, caput.",
+ macete:"Reversão = 'volta para a escala' — é o caminho inverso da agregação."},
+
+{tema:"Reversão", artigo:"Art. 109, parágrafo único", tipo:"CE",
+ enunciado:"Ao completar 2 anos contínuos ou não na situação de agregado, a reversão dar-se-á automaticamente, sem exigência de ato de reversão.",
+ correta:true,
+ explicacao:"Certo — art. 109, parágrafo único (Lei 8.362/2005).",
+ macete:"2 anos de agregação (contínuos ou não) → reversão AUTOMÁTICA. Esse '2 anos' também aparece no art. 120, V (afastamento agregado em cargo civil) — preste atenção ao contexto."},
+
+{tema:"Excedente", artigo:"Art. 110", tipo:"CE",
+ enunciado:"NÃO é hipótese de situação de 'excedente' prevista no art. 110: Ser nomeado para gabinete do Vice-Governador.",
+ correta:true,
+ explicacao:"As alternativas a, b, d são hipóteses do art. 110 (incisos I, III, VI). 'Ser nomeado para gabinete do Vice-Governador' é hipótese de exercício de função policial-militar (art. 36, I), não de excedente.",
+ macete:"'Excedente' = situação transitória de QUEM VOLTA e o quadro já está cheio. Confunda-se com 'agregação' (sai do quadro) apenas se a questão trocar os conceitos."},
+
+{tema:"Excedente", artigo:"Art. 110, §2º", tipo:"CE",
+ enunciado:"O militar em situação de excedente é considerado em efetivo serviço para todos os efeitos, concorrendo em igualdade de condições a qualquer cargo militar.",
+ correta:true,
+ explicacao:"Certo — art. 110, §2º.",
+ macete:"Excedente ≠ punição: continua em efetivo serviço, com abreviatura 'Excd' (§1º), sem restrição a cargos."},
+
+// ---------- AUSENTE / DESERTOR / DESAPARECIDO ----------
+{tema:"Ausente e Desertor", artigo:"Art. 111", tipo:"CE",
+ enunciado:"É considerado ausente o militar que, por mais de 24 horas consecutivas, deixar de comparecer à sua OPM sem comunicar motivo de impedimento, ou ausentar-se sem licença.",
+ correta:true,
+ explicacao:"Certo — art. 111, caput e incisos I e II.",
+ macete:"Marco de 'ausente' = 24 HORAS consecutivas sem comunicação/licença. Diferente de 'desaparecido' (art. 113) que é 8 dias."},
+
+{tema:"Desaparecido/Extraviado", artigo:"Art. 113 e 114", tipo:"CE",
+ enunciado:"É considerado desaparecido o militar da ativa que tiver paradeiro ignorado por mais de 8 dias consecutivos em serviço, viagem, operação ou calamidade; após 30 dias nessa condição, será considerado extraviado.",
+ correta:true,
+ explicacao:"Certo — arts. 113, caput, e 114.",
+ macete:"Sequência temporal: 8 dias → DESAPARECIDO; 30 dias → EXTRAVIADO. '8 antes de 30', em ordem crescente de gravidade."},
+
+// ---------- DESLIGAMENTO / EXCLUSÃO ----------
+{tema:"Desligamento", artigo:"Art. 115", tipo:"CE",
+ enunciado:"São hipóteses de desligamento ou exclusão do serviço ativo previstas no art. 115, EXCETO: Perda do posto e da patente.",
+ correta:false,
+ explicacao:"Art. 115 lista: transferência para reserva remunerada, demissão, reforma, perda do posto/patente, licenciamento, exclusão a bem da disciplina, deserção, falecimento, extravio (após IPM). Conclusão de curso não desliga ninguém.",
+ macete:"9 hipóteses do art. 115 — todas são 'saídas definitivas ou quase-definitivas' da ativa. Conclusão de curso é o oposto: mantém o militar na carreira."},
+
+{tema:"Desligamento", artigo:"Art. 116", tipo:"CE",
+ enunciado:"A transferência para a reserva remunerada ou a reforma isenta o militar da indenização de prejuízos causados à Fazenda Estadual ou a terceiros.",
+ correta:false,
+ explicacao:"Errado. O art. 116 diz que a transferência/reforma NÃO ISENTA o militar dessas indenizações nem do pagamento de pensões decorrentes de sentença judicial.",
+ macete:"'Sair da ativa' não 'limpa' dívidas com o Estado/terceiros — passagem para inatividade NÃO isenta de indenizações/pensões judiciais."},
+
+// ---------- RESERVA REMUNERADA ----------
+{tema:"Reserva Remunerada", artigo:"Art. 119", tipo:"CE",
+ enunciado:"A transferência para a reserva remunerada a pedido será concedida se o militar contar com 30 anos de contribuição (masculino) ou 25 anos (feminino).",
+ correta:true,
+ explicacao:"Certo — art. 119, caput (redação da Lei 8.080/2004).",
+ macete:"Mesmo par '30/25' do art. 62, II — confirma a regra geral de tempo de contribuição por sexo para passagem voluntária à reserva."},
+
+{tema:"Reserva Remunerada", artigo:"Art. 119, §1º e §2º", tipo:"CE",
+ enunciado:"Se o militar realizou curso/estágio com duração entre 6 meses e 1 ano por conta do Estado, a transferência para a reserva remunerada a pedido só ocorre após: 18 meses da conclusão do curso, ou indenização das despesas.",
+ correta:true,
+ explicacao:"Art. 119, §1º: curso/estágio de 6 meses a 1 ano → carência de 18 meses após conclusão (ou indenização das despesas). Para curso superior a 1 ano (§2º), a carência é de 36 meses.",
+ macete:"Curso 6m-1ano → carência 18 meses. Curso > 1 ano → carência 36 meses. Sempre cabe indenização das despesas como alternativa à espera. '18 para o médio, 36 para o longo'."},
+
+{tema:"Reserva Compulsória", artigo:"Art. 120, I", tipo:"CE",
+ enunciado:"As idades-limite para transferência compulsória à reserva remunerada são, para Oficiais (masc./fem.) e Praças (masc./fem.), respectivamente: 60/55 anos (oficiais) e 58/53 anos (praças).",
+ correta:false,
+ explicacao:"Art. 120, I (redação Lei 7.855/2003): Oficial masculino 62, feminino 57; Praça masculino 60, feminino 55.",
+ macete:"Sequência decrescente de 'pares': Oficial M=62, Oficial F=57 (diferença 5); Praça M=60, Praça F=55 (diferença 5). 'Oficial sempre +2 em relação à praça do mesmo sexo' (62 vs 60; 57 vs 55)."},
+
+{tema:"Reserva Compulsória", artigo:"Art. 120, II", tipo:"CE",
+ enunciado:"O policial-militar será compulsoriamente transferido para a reserva remunerada ao completar 8 anos no último posto/graduação de seu quadro, desde que conte com mais de 30 anos de serviço (masculino) ou mais de 25 anos (feminino).",
+ correta:true,
+ explicacao:"Certo — art. 120, II (redação Lei 7.855/2003).",
+ macete:"'8 anos no topo' + '30/25 anos de serviço (m/f)' = reserva compulsória — combina tempo NO POSTO com tempo TOTAL de serviço."},
+
+{tema:"Reforma - Idades", artigo:"Art. 125, I", tipo:"CE",
+ enunciado:"As idades-limite de permanência na reserva remunerada, após as quais o militar é reformado, são para Oficial (masc./fem.) e Praças (masc./fem.): 66/61 (oficiais) e 64/59 (praças).",
+ correta:true,
+ explicacao:"Art. 125, I (redação Lei 7.855/2003): Oficial M=66, F=61; Praças M=64, F=59.",
+ macete:"Compare com art. 120 (compulsória p/ reserva): Oficial 62/57, Praça 60/55. Na REFORMA (art.125) some +4 a cada um: 66/61 e 64/59. 'Soma 4 anos da reserva para a reforma'."},
+
+{tema:"Reforma - Incapacidade", artigo:"Art. 127, IV", tipo:"CE",
+ enunciado:"São causas de incapacidade definitiva, entre outras, tuberculose ativa, alienação mental, neoplasia maligna, cegueira, lepra, paralisia irreversível, cardiopatia grave e mal de Parkinson.",
+ correta:true,
+ explicacao:"Certo — rol do art. 127, IV.",
+ macete:"Doenças do inciso IV são as 'doenças graves clássicas' do serviço público (mesma lógica de isenção de IR para aposentados) — tuberculose, câncer, cegueira, Parkinson, etc."},
+
+{tema:"Reforma - Incapacidade", artigo:"Art. 127, §4º", tipo:"CE",
+ enunciado:"Considera-se alienação mental todo caso de distúrbio mental grave persistente que, esgotados os tratamentos, destrua a autodeterminação e torne o indivíduo total e permanentemente impossibilitado para qualquer trabalho, EXCLUINDO-SE as epilepsias psíquicas e neurológicas.",
+ correta:true,
+ explicacao:"Certo — art. 127, §§4º e 5º combinados.",
+ macete:"Epilepsia NÃO é considerada alienação mental para fins do Estatuto (§5º) — exceção expressa que costuma ser invertida em prova."},
+
+{tema:"Reforma", artigo:"Art. 128 e 129", tipo:"CE",
+ enunciado:"O militar da ativa julgado incapaz definitivamente por motivo de ferimento em serviço, acidente em serviço, doença relacionada ao serviço ou doença da lista do inciso IV será reformado com qualquer tempo de serviço.",
+ correta:true,
+ explicacao:"Certo — art. 129, combinando com incisos I a IV do art. 127.",
+ macete:"Incapacidade por causas relacionadas ao SERVIÇO (incisos I-IV) → reforma com QUALQUER tempo de serviço (remuneração integral, art. 128). Incapacidade SEM relação com o serviço (inciso V) → reforma PROPORCIONAL (art. 130)."},
+
+{tema:"Reforma", artigo:"Art. 130", tipo:"CE",
+ enunciado:"O militar da ativa julgado incapaz definitivamente por motivo SEM relação de causa e efeito com o serviço será reformado com remuneração proporcional ao seu tempo de serviço.",
+ correta:true,
+ explicacao:"Certo — art. 130 (redação Lei 7.855/2003).",
+ macete:"Sem relação com o serviço (inciso V do art. 127) = reforma PROPORCIONAL. Com relação (incisos I-IV) = reforma INTEGRAL (qualquer tempo de serviço)."},
+
+{tema:"Reforma", artigo:"Art. 131, §1º", tipo:"CE",
+ enunciado:"O militar reformado por incapacidade definitiva que for julgado apto em inspeção de saúde por Junta Superior pode retornar ao serviço ativo, salvo se já tiver atingido a idade-limite do art. 120, I.",
+ correta:true,
+ explicacao:"Certo — art. 131, §1º (redação Lei 7.855/2003).",
+ macete:"Retorno do reformado 'curado' = possível, EXCETO se já passou da idade-limite de reserva (art. 120, I) — nesse caso, vai direto para a reserva remunerada (§2º), se não passar de 2 anos como reformado."},
+
+// ---------- DEMISSÃO / PERDA DE POSTO ----------
+{tema:"Demissão", artigo:"Art. 133 e 134", tipo:"CE",
+ enunciado:"A demissão na Polícia Militar aplica-se exclusivamente aos oficiais, podendo ser a pedido ou ex officio; a pedido, sem indenização se contar com mais de 5 anos de oficialato.",
+ correta:true,
+ explicacao:"Certo — arts. 133 e 134, I.",
+ macete:"Marco da demissão a pedido: 5 ANOS de oficialato. < 5 anos → indeniza despesas de formação; > 5 anos → sem indenização."},
+
+{tema:"Demissão", artigo:"Art. 134, §1º e §2º", tipo:"CE",
+ enunciado:"Sobre indenização por cursos custeados pelo Estado em caso de demissão a pedido do oficial, é correto que: Curso de 6 a 18 meses: indenização se não passaram mais de 5 anos da conclusão.",
+ correta:false,
+ explicacao:"Art. 134, §1º: curso/estágio de 6 meses a 18 meses → indenização se não decorridos mais de 2 anos do término. §2º: curso superior a 18 meses → mesma regra, se não decorridos mais de 3 anos.",
+ macete:"Curso 6-18 meses → janela de 2 anos para indenização. Curso > 18 meses → janela de 3 anos. 'Curso maior, janela maior' (2 vs 3)."},
+
+{tema:"Demissão", artigo:"Art. 134, §3º", tipo:"CE",
+ enunciado:"O oficial demissionário a pedido não terá direito a qualquer remuneração.",
+ correta:true,
+ explicacao:"Certo — art. 134, §3º.",
+ macete:"Demissão a pedido (oficial) = SEM remuneração, diferente da transferência para reserva remunerada (que mantém proventos)."},
+
+{tema:"Indignidade/Incompatibilidade", artigo:"Art. 136", tipo:"CE",
+ enunciado:"Fica sujeito à declaração de indignidade ou incompatibilidade com o oficialato o oficial que, EXCETO: Tiver sido promovido por merecimento no último biênio.",
+ correta:true,
+ explicacao:"Art. 136, I a IV trata de condenações graves, julgamento em Conselho de Justificação e perda de nacionalidade — não há relação com promoção por merecimento.",
+ macete:"Causas de indignidade = sempre fatos NEGATIVOS graves (condenação, perda de nacionalidade, culpa em Conselho de Justificação) — nunca um fato POSITIVO como promoção."},
+
+{tema:"Perda do Posto", artigo:"Art. 137", tipo:"CE",
+ enunciado:"O Oficial PM só perderá o posto e a patente se for declarado indigno do Oficialato ou com ele incompatível, por decisão do Tribunal de Justiça do Estado.",
+ correta:true,
+ explicacao:"Certo — art. 137, caput.",
+ macete:"Perda de posto/patente de OFICIAL = competência exclusiva do TRIBUNAL DE JUSTIÇA DO ESTADO (não Governador, não Comandante-Geral)."},
+
+// ---------- LICENCIAMENTO / EXCLUSÃO ----------
+{tema:"Licenciamento", artigo:"Art. 139", tipo:"CE",
+ enunciado:"O licenciamento do serviço ativo aplica-se somente às praças, podendo ser a pedido ou ex officio.",
+ correta:true,
+ explicacao:"Certo — art. 139, caput.",
+ macete:"LICENCIAMENTO = só PRAÇAS. DEMISSÃO = só OFICIAIS (art. 133). Não confunda os dois institutos — eles são espelhados por categoria."},
+
+{tema:"Licenciamento", artigo:"Art. 139, §4º", tipo:"CE",
+ enunciado:"O licenciamento a bem da disciplina será aplicado às praças SEM estabilidade assegurada que ingressarem em MAU comportamento, sendo de competência do Governador do Estado ou autoridade delegada.",
+ correta:true,
+ explicacao:"Certo — art. 139, §4º (redação Lei 8.080/2004).",
+ macete:"Licenciamento a bem da disciplina = praça SEM estabilidade + mau comportamento + ato do Governador (ou delegado). Praça COM estabilidade vai para Exclusão a Bem da Disciplina (art. 141), não licenciamento."},
+
+{tema:"Exclusão a Bem da Disciplina", artigo:"Art. 141", tipo:"CE",
+ enunciado:"A exclusão a Bem da Disciplina será aplicada, ex officio, ao Aspirante-a-Oficial e demais praças COM estabilidade assegurada, em casos como condenação a pena restritiva de liberdade superior a 2 anos ou perda da nacionalidade brasileira.",
+ correta:true,
+ explicacao:"Certo — art. 141, caput, I e II.",
+ macete:"Exclusão a Bem da Disciplina = praça COM estabilidade (espelha a 'demissão' dos oficiais e a 'indignidade' do art. 136, mas para praças)."},
+
+{tema:"Exclusão a Bem da Disciplina", artigo:"Art. 142", tipo:"CE",
+ enunciado:"É de competência do Comandante-Geral o ato de exclusão a bem da disciplina do Aspirante-a-Oficial e das praças com estabilidade assegurada.",
+ correta:false,
+ explicacao:"Errado. O art. 142 (redação Lei 8.080/2004) atribui essa competência ao GOVERNADOR DO ESTADO, não ao Comandante-Geral.",
+ macete:"Exclusão a bem da disciplina (praça com estabilidade) = ato do GOVERNADOR. Mesma lógica: atos que retiram definitivamente o militar da carreira tendem a ser do Governador."},
+
+// ---------- DESERÇÃO / FALECIMENTO / EXTRAVIO ----------
+{tema:"Deserção", artigo:"Art. 144, §1º", tipo:"CE",
+ enunciado:"A demissão do oficial ou exclusão da praça com estabilidade assegurada por deserção processar-se-á após 1 ano de agregação, se não houver captura ou apresentação voluntária antes do prazo.",
+ correta:true,
+ explicacao:"Certo — art. 144, §1º.",
+ macete:"Deserção (oficial/praça com estabilidade): 1 ano de agregação → demissão/exclusão, SALVO captura/apresentação voluntária antes."},
+
+{tema:"Deserção", artigo:"Art. 144, §2º", tipo:"CE",
+ enunciado:"A praça SEM estabilidade assegurada será automaticamente excluída após ser oficialmente declarada desertora, sem necessidade de aguardar 1 ano.",
+ correta:true,
+ explicacao:"Certo — art. 144, §2º.",
+ macete:"Praça SEM estabilidade + deserção = exclusão AUTOMÁTICA (sem o prazo de 1 ano que vale para oficiais/praças com estabilidade)."},
+
+{tema:"Falecimento/Extravio", artigo:"Art. 145 e 146", tipo:"CE",
+ enunciado:"O falecimento do militar da ativa acarreta exclusão imediata do serviço ativo a partir da data do óbito, enquanto o extravio acarreta afastamento temporário, com exclusão definitiva 6 meses após a agregação por extravio.",
+ correta:true,
+ explicacao:"Certo — arts. 145 e 146, §1º.",
+ macete:"Falecimento = exclusão IMEDIATA (óbito). Extravio = agregação temporária → exclusão após 6 MESES de agregação por extravio."},
+
+// ---------- TEMPO DE SERVIÇO ----------
+{tema:"Tempo de Serviço", artigo:"Art. 148, §1º", tipo:"CE",
+ enunciado:"Considera-se data de ingresso, para fins do Estatuto, a data do ato em que o militar é considerado incluído/matriculado em uma OPM, ou a data de apresentação pronto para o serviço, no caso de nomeação.",
+ correta:true,
+ explicacao:"Certo — art. 148, §1º, I e II.",
+ macete:"Data de ingresso: matrícula/inclusão = data do ATO; nomeação = data da APRESENTAÇÃO pronto para o serviço — duas formas distintas de marcar o início da contagem."},
+
+{tema:"Tempo de Serviço", artigo:"Art. 150, §3º", tipo:"CE",
+ enunciado:"Para apuração do tempo de efetivo serviço em anos, aplica-se o divisor 360 sobre o total de dias.",
+ correta:false,
+ explicacao:"Errado. O art. 150, §3º determina o divisor 365 (e não 360) para obter os anos de efetivo serviço.",
+ macete:"Divisor para converter dias em anos de serviço = 365 (ano civil real), não 360 (ano comercial, usado em outras áreas como financeira)."},
+
+{tema:"Tempo de Serviço", artigo:"Art. 151, §2º", tipo:"CE",
+ enunciado:"NÃO é computável para efeito algum, segundo o art. 151, §2º, o tempo: Passado em cumprimento de pena restritiva de liberdade (sem suspensão condicional).",
+ correta:false,
+ explicacao:"Licença-prêmio NÃO está no rol do §2º — pelo contrário, o art. 93, §2º diz que ela não interrompe a contagem de tempo de serviço. As demais alternativas (excedente de 6m, desertor, pena restritiva sem sursis) estão no §2º.",
+ macete:"Tempo NÃO computável (art.151,§2º): excedente saúde família (>6m), interesse particular, desertor, suspensão de exercício, pena restritiva (sem sursis). LICENÇA-PRÊMIO é diferente — sempre conta!"},
+
+{tema:"Tempo de Serviço", artigo:"Art. 152", tipo:"CE",
+ enunciado:"O tempo que o militar passar afastado das funções por ferimentos recebidos em serviço de preservação da ordem pública, ou por moléstia adquirida no exercício de função militar, será computado como se estivesse no exercício daquelas funções.",
+ correta:true,
+ explicacao:"Certo — art. 152.",
+ macete:"Afastamento por acidente/doença EM SERVIÇO = conta como tempo de serviço normal (não é 'desconto')."},
+
+{tema:"Tempo de Serviço", artigo:"Art. 156", tipo:"CE",
+ enunciado:"Na contagem dos anos de serviço, pode ser computada superposição de tempos de serviço público federal, estadual e municipal entre si, bem como acréscimos para possuidores de curso universitário.",
+ correta:false,
+ explicacao:"Errado. O art. 156 VEDA expressamente a superposição de tempos de serviço (federal/estadual/municipal/privado) entre si, e também não permite acréscimos para quem tem curso universitário.",
+ macete:"Art. 156 = artigo das PROIBIÇÕES de contagem: sem superposição de vínculos, sem 'bônus' por diploma universitário, sem contar tempo após a inclusão/matrícula/nomeação como 'extra'."},
+
+// ---------- RECOMPENSAS E DISPENSAS ----------
+{tema:"Recompensas", artigo:"Art. 158, §1º", tipo:"CE",
+ enunciado:"São recompensas militares previstas no art. 158, §1º: Prêmio de Honra ao Mérito, condecorações, elogios/louvores e dispensas do serviço.",
+ correta:true,
+ explicacao:"Art. 158, §1º, I a IV: Prêmio de Honra ao Mérito, condecorações por serviços prestados, elogios/louvores, dispensas do serviço.",
+ macete:"4 tipos de recompensa: Honra ao Mérito, condecorações, elogios/louvores, dispensas — todas são reconhecimento, sem efeito remuneratório direto."},
+
+{tema:"Dispensas", artigo:"Art. 159, §1º", tipo:"CE",
+ enunciado:"As dispensas do serviço como recompensa terão duração de até 8 dias, e as decorrentes de prescrição médica ou para desconto em férias, de até 15 dias.",
+ correta:true,
+ explicacao:"Certo — art. 159, §1º.",
+ macete:"Dispensa-RECOMPENSA = até 8 dias. Dispensa-MÉDICA ou DESCONTO DE FÉRIAS = até 15 dias. '8 para o prêmio, 15 para o resto'."},
+
+// ---------- DISPOSIÇÕES FINAIS ----------
+{tema:"Disposições Finais", artigo:"Art. 160", tipo:"CE",
+ enunciado:"É vedado a organização civil usar designações que sugiram vinculação à PM, EXCETO associações/clubes que congreguem militares e seus familiares para intercâmbio com a sociedade civil.",
+ correta:true,
+ explicacao:"Certo — art. 160, caput e parágrafo único.",
+ macete:"Exceção do art. 160: associações/clubes RECREATIVOS/SOCIAIS de militares e família PODEM usar a referência — vedação é para organizações que confundam com a corporação oficial."},
+
+{tema:"Disposições Finais", artigo:"Art. 161", tipo:"CE",
+ enunciado:"Sobre o desligamento do aluno do Curso de Formação de Oficial, é correto que: Desligado por motivo disciplinar, sempre poderá se rematricular.",
+ correta:false,
+ explicacao:"Art. 161, I: falta de aproveitamento → direito a 1 rematrícula. II: saúde → rematrícula em até 2 anos (não 'qualquer prazo'). III: a pedido → SEM direito a rematrícula. IV: disciplinar → licenciado a bem da disciplina (salvo praça com estabilidade).",
+ macete:"4 situações do art. 161: falta de aproveitamento (1 rematrícula) / saúde (rematrícula até 2 anos) / a pedido (sem rematrícula) / disciplinar (licenciado, regra especial p/ estabilizado)."},
+
+{tema:"Disposições Finais", artigo:"Art. 161, parágrafo único", tipo:"CE",
+ enunciado:"O aluno do CFO que concluir o primeiro ano com aproveitamento, sendo reprovado nos anos subsequentes e sem direito a rematrícula, poderá ser promovido à graduação de 3º Sargento.",
+ correta:true,
+ explicacao:"Certo — art. 161, parágrafo único.",
+ macete:"Aluno de CFO 'malsucedido' depois do 1º ano aprovado não é simplesmente excluído — pode 'descer' para 3º Sargento, aproveitando o que já estudou."},
+
+{tema:"Disposições Finais", artigo:"Art. 162", tipo:"CE",
+ enunciado:"Alunos de outros cursos com duração superior a 4 meses, desligados por falta de aproveitamento ou motivo disciplinar, só poderão concorrer a nova indicação após 12 meses do desligamento.",
+ correta:true,
+ explicacao:"Certo — art. 162.",
+ macete:"Cursos > 4 meses + desligamento (aproveitamento/disciplina) = 'quarentena' de 12 MESES para nova indicação."},
+
+{tema:"Disposições Finais", artigo:"Art. 163", tipo:"CE",
+ enunciado:"A indicação para CSP, CAO, CEGESP e CAS recairá sobre os candidatos aptos nos exames de saúde/aptidão física mais MODERNOS na escala hierárquica.",
+ correta:false,
+ explicacao:"Errado. O art. 163 (redação Lei 7.519/2000) diz que a indicação recai sobre os candidatos aptos mais ANTIGOS na escala hierárquica, não os mais modernos.",
+ macete:"Cursos de aperfeiçoamento (CSP, CAO, CEGESP, CAS): prioridade aos mais ANTIGOS na hierarquia (entre os aptos), respeitando a precedência por antiguidade do art. 20/21."},
+
+{tema:"Disposições Finais", artigo:"Art. 166", tipo:"CE",
+ enunciado:"Em matéria não regulada na legislação estadual, são adotadas na PM-MA as leis e regulamentos do Exército Brasileiro, no que lhes for pertinente.",
+ correta:true,
+ explicacao:"Certo — art. 166.",
+ macete:"'Lacuna' na legislação estadual → aplica-se subsidiariamente legislação do EXÉRCITO BRASILEIRO (não da Marinha ou Aeronáutica especificamente, mas Exército, por afinidade de função terrestre/policial)."},
+
+{tema:"Disposições Finais", artigo:"Art. 167", tipo:"CE",
+ enunciado:"Os dispositivos do Estatuto aplicam-se também aos servidores militares integrantes do Corpo de Bombeiros Militar.",
+ correta:true,
+ explicacao:"Certo — art. 167.",
+ macete:"Estatuto da PM-MA também vale para o CBM-MA (Corpo de Bombeiros Militar) — extensão expressa de aplicabilidade."},
+
+// ---------- QUESTÕES ADICIONAIS COMBINADAS / REVISÃO ----------
+{tema:"Revisão Geral", artigo:"Art. 19 e 22", tipo:"CE",
+ enunciado:"Assinale a alternativa que apresenta a ordem hierárquica CORRETA, da mais alta para a mais baixa, dentre as opções: Coronel > Capitão > 1º Tenente > Aspirante-a-Oficial > Subtenente > 1º Sargento.",
+ correta:true,
+ explicacao:"Ordem correta: Coronel (Of. Superior) > Capitão (Of. Intermediário) > 1º Tenente (Of. Subalterno) > Aspirante-a-Oficial (Praça Especial superior às demais praças) > Subtenente > 1º Sargento. As demais alternativas invertem pares (Tenente-Coronel < Major na 'C'; Major < Tenente-Coronel na 'D').",
+ macete:"Memorize a ordem completa decrescente: Cel > Ten-Cel > Maj > Cap > 1ºTen > 2ºTen > Aspirante > Cadete (em reuniões) > Subtenente > 1ºSgt > 2ºSgt > 3ºSgt > Cabo > Soldado. 'Cel-TC-Maj-Cap-1T-2T' é o círculo de oficiais; depois praças especiais e praças."},
+
+{tema:"Revisão Geral", artigo:"Vários", tipo:"CE",
+ enunciado:"Segundo o Estatuto, todo policial-militar, independentemente do tempo de serviço, pode requerer transferência para a reserva remunerada a pedido.",
+ correta:false,
+ explicacao:"Errado. A transferência a pedido exige 30 anos de contribuição (masculino) ou 25 anos (feminino), conforme art. 119 — não é um direito incondicional de 'qualquer' militar.",
+ macete:"Toda vez que a questão usar 'qualquer militar', 'todos, independentemente', 'sem exceção' para direitos condicionados a tempo de serviço/idade, suspeite — geralmente é generalização indevida."},
+
+{tema:"Revisão Geral", artigo:"Vários", tipo:"CE",
+ enunciado:"O Comandante-Geral da Polícia Militar do Maranhão é a autoridade competente para nomear o Chefe do Estado-Maior e Subchefe do Estado-Maior, bem como para promover oficiais.",
+ correta:false,
+ explicacao:"Errado. Tanto a nomeação do Chefe/Subchefe do Estado-Maior (art. 32) quanto a promoção de oficiais (art. 78) são atos do GOVERNADOR DO ESTADO, não do Comandante-Geral.",
+ macete:"Lista de atos do GOVERNADOR (memorize): nomear Comandante-Geral (31), nomear Chefe/Subchefe EM (32), provimento de cargo PM (26), promoção de oficiais (78), demissão/exclusão de oficiais/praças estáveis (137,142), transferência p/ reserva não-remunerada (123), agregação (107)."},
+
+{tema:"Revisão Geral", artigo:"Vários", tipo:"CE",
+ enunciado:"A licença-paternidade está prevista no Estatuto como uma das modalidades de licença, podendo ser interrompida nas hipóteses do art. 98.",
+ correta:true,
+ explicacao:"Certo — art. 92, §1º, VI (licença-paternidade) e art. 98, caput (interrupções aplicáveis a ela, junto com licença-prêmio e interesse particular).",
+ macete:"As 3 licenças 'interrompíveis' do art. 98: PRÊMIO, PATERNIDADE e INTERESSE PARTICULAR — as demais (saúde, gestante, saúde de família) não estão nessa lista de interrupção do art. 98."},
+
+{tema:"Revisão Geral", artigo:"Art. 9º, 62, 95", tipo:"CE",
+ enunciado:"Relacione corretamente o número '10 anos' ao seu efeito no Estatuto: Idade máxima para ingresso na corporação.",
+ correta:false,
+ explicacao:"O número 10 anos aparece em três contextos: estabilidade da praça (art. 62, III, a), requisito para licença de interesse particular (art. 95) e marco de agregação por candidatura a cargo eletivo (arts. 64, §1º e 106, §1º, m).",
+ macete:"'10 anos' é um número que se repete em 3 contextos diferentes — quando a prova citar '10 anos', pergunte-se: estabilidade? licença particular? candidatura/agregação? O contexto da frase decide."},
+
+{tema:"Revisão Geral", artigo:"Vários", tipo:"CE",
+ enunciado:"O militar agregado por ter sido condenado a pena restritiva de liberdade superior a 6 meses, enquanto durar a execução, continua sendo considerado em serviço ativo para todos os efeitos do art. 106, §2º.",
+ correta:false,
+ explicacao:"Errado. O §2º do art. 106 só considera 'em serviço ativo' as agregações das alíneas 'a', 'b', 'c' e 'h' (incapacidade temporária/definitiva em tramitação, licença saúde >1 ano, desertor reincluído). A condenação >6 meses (alínea 'j') NÃO está nessa lista.",
+ macete:"Só 4 alíneas do §1º (a, b, c, h) mantêm o agregado 'como em serviço ativo' (§2º) — são situações de SAÚDE/processo de reforma e desertor reincluído. Condenações (i, j, n) NÃO entram nessa exceção."},
+
+{tema:"Revisão Geral", artigo:"Art. 41 e 64", tipo:"CE",
+ enunciado:"Tanto o militar da ativa quanto o da reserva remunerada convocado podem exercer livremente a administração de empresas privadas, desde que não seja durante o horário de expediente.",
+ correta:false,
+ explicacao:"Errado. O art. 41 veda ao militar da ativa administrar/gerenciar sociedades (salvo acionista/quotista), e o art. 41, §1º proíbe ao convocado da reserva tratar de interesses de empresas privadas nas OPMs e repartições públicas civis — não há liberação por 'fora do expediente'.",
+ macete:"'Fora do horário de expediente' NUNCA é justificativa para liberar proibições do Estatuto (administração de empresa, uso do posto para negócios etc.) — a vedação é pela CONDIÇÃO de militar, não pelo horário."},
+
+{tema:"Revisão Geral", artigo:"Art. 84 e 92", tipo:"CE",
+ enunciado:"Núpcias e luto são modalidades de LICENÇA previstas no art. 92 do Estatuto.",
+ correta:false,
+ explicacao:"Errado. Núpcias e luto são AFASTAMENTOS (art. 84), categoria distinta de LICENÇAS (art. 92). A confusão entre 'afastamento' e 'licença' é proposital em provas.",
+ macete:"AFASTAMENTOS (art.84): núpcias, luto, trânsito, instalação — curtos, ligados a eventos pontuais. LICENÇAS (art.92): prêmio, saúde, interesse particular, gestante, paternidade — mais longas, requerimento formal."},
+
+{tema:"Revisão Geral", artigo:"Art. 39 vs 43", tipo:"CE",
+ enunciado:"A diferença central entre o 'Valor Policial Militar' (art. 39) e os 'Deveres Policiais-Militares' (art. 43) é que: O valor é um conjunto de sentimentos/atitudes (civismo, fé na missão, espírito de corpo); os deveres são obrigações concretas decorrentes de vínculos com a comunidade e segurança.",
+ correta:true,
+ explicacao:"O art. 39 trata de manifestações de VALOR (dimensão moral/atitudinal), enquanto o art. 43 trata de DEVERES concretos (dedicação integral, culto aos símbolos, probidade, disciplina, cumprimento de ordens, tratamento ao subordinado).",
+ macete:"VALOR (art.39) = 'ser' (atitude interna). DEVERES (art.43) = 'fazer' (ação concreta exigível). Ambos vigentes e aplicáveis a TODOS os militares, sem distinção de posto/graduação."},
+
+{tema:"Revisão Geral", artigo:"Art. 33 e 34", tipo:"CE",
+ enunciado:"Na falta de militar qualificado para a função, poderá ser designado outro militar de posto/graduação SUPERIOR, obedecida a precedência hierárquica.",
+ correta:false,
+ explicacao:"Errado. O art. 34 permite a designação de militar de posto/graduação INFERIOR (não superior) na falta de militar qualificado.",
+ macete:"Art. 34 = solução de 'emergência': falta gente qualificado → pode usar alguém de grau INFERIOR (não superior) — segue a lógica de que superiores já têm suas atribuições próprias."},
+
+{tema:"Revisão Geral", artigo:"Art. 36", tipo:"CE",
+ enunciado:"São consideradas no exercício de função policial-militar ou de interesse policial-militar as nomeações para a Auditoria da Justiça Militar e para o cargo de Diretor-Geral do DETRAN.",
+ correta:true,
+ explicacao:"Certo — art. 36, V e VI (inciso VI inserido pela Lei 7.572/2000).",
+ macete:"Art. 36 lista 9 destinos 'de interesse PM' fora da estrutura tradicional: assessoria do Governador, gabinetes (Vice-Governador, Presidente da Assembleia, Presidente do TJ, Secretário de Justiça), Auditoria Militar, DETRAN, centros integrados de segurança, TCE, MP — praticamente 'órgãos de Estado relacionados à segurança/justiça'."},
+
+{tema:"Revisão Geral", artigo:"Art. 38", tipo:"CE",
+ enunciado:"Policiais-militares nomeados para função/cargo não catalogados nos arts. 35 e 36, bem como excedentes às vagas dos quadros de organização, são considerados no exercício de função de natureza civil.",
+ correta:true,
+ explicacao:"Certo — art. 38 (redação Lei 7.855/2003).",
+ macete:"Se a função NÃO está nos arts. 35 (atividades 'dentro' da PM/Forças Armadas/órgãos de inteligência) nem 36 (gabinetes/órgãos de interesse PM), e o militar está fora das vagas do quadro → função de natureza CIVIL (art. 38)."},
+
+{tema:"Revisão Geral", artigo:"Art. 17 a 22", tipo:"CE",
+ enunciado:"A disciplina e o respeito à hierarquia devem ser mantidos em todas as circunstâncias, entre militares da ativa, da reserva remunerada e reformados.",
+ correta:true,
+ explicacao:"Certo — art. 17, §3º.",
+ macete:"Disciplina/hierarquia NÃO 'acaba' com a inatividade — vale para ATIVA + RESERVA + REFORMADOS, sempre."},
+
+{tema:"Revisão Geral", artigo:"Art. 5º e 6º", tipo:"CE",
+ enunciado:"As expressões 'na ativa', 'da ativa', 'em serviço ativo' e 'em atividade policial-militar' são equivalentes para os fins do Estatuto.",
+ correta:true,
+ explicacao:"Certo — art. 6º.",
+ macete:"Art. 5º = equivalências de nomes da CORPORAÇÃO ('PM do Estado do MA' = 'Instituição Policial Militar' etc.). Art. 6º = equivalências de SITUAÇÃO FUNCIONAL ('na ativa' = 'em serviço ativo' etc.). Dois artigos de equivalência com objetos diferentes!"},
+
+{tema:"Revisão Geral", artigo:"Art. 7º", tipo:"CE",
+ enunciado:"A condição jurídica dos servidores públicos militares é definida exclusivamente por este Estatuto, não se aplicando dispositivos constitucionais ou outras leis peculiares.",
+ correta:false,
+ explicacao:"Errado. O art. 7º estabelece que a condição jurídica é definida pelos dispositivos CONSTITUCIONAIS aplicáveis, pela LEGISLAÇÃO ESPECÍFICA, por ESTE ESTATUTO e por LEIS PECULIARES — não é 'exclusivamente' o Estatuto.",
+ macete:"'Exclusivamente' / 'apenas' / 'somente este Estatuto' costuma ser pegadinha — a condição jurídica do militar é multifontes: CF + legislação específica + Estatuto + leis peculiares."},
+
+{tema:"Revisão Geral", artigo:"Art. 16", tipo:"CE",
+ enunciado:"Candidatos civis selecionados em concurso público para o Curso de Formação de Sargentos e Curso de Formação de Soldados ingressam na PM como alunos, por período correspondente à duração do curso.",
+ correta:true,
+ explicacao:"Certo — art. 16 (redação Lei 7.855/2003).",
+ macete:"Civil aprovado em concurso para CFS/CFSd = 'aluno' durante o curso, não 'militar efetivo' ainda — o vínculo pleno vem depois da formação."},
+
+{tema:"Revisão Geral", artigo:"Art. 11", tipo:"CE",
+ enunciado:"Para ingresso no Quadro de Oficiais de Administração (QOA) ou de Oficiais Especialistas (QOE), são selecionados Subtenentes com no mínimo 18 anos de efetivo serviço e 2 anos na graduação, mediante aprovação no CHOA ou CHOE.",
+ correta:true,
+ explicacao:"Certo — art. 11, I a IV (redação Lei 8.362/2005).",
+ macete:"QOA/QOE = porta de acesso de SUBTENENTE para oficial 'administrativo/especialista' (não combatente): requisitos = 2º grau + 18 anos serviço + 2 anos na graduação + aprovação em curso específico (CHOA/CHOE)."},
+
+{tema:"Revisão Geral", artigo:"Art. 11, §3º", tipo:"CE",
+ enunciado:"Os atos que afetam a honra pessoal, o pundonor militar e o decoro da classe, referentes ao conceito profissional e moral, dispensam comprovação por processo legal, bastando a avaliação subjetiva da chefia.",
+ correta:false,
+ explicacao:"Errado. O art. 11, §3º exige que tais atos estejam DEVIDAMENTE COMPROVADOS através do DEVIDO PROCESSO LEGAL — não basta avaliação subjetiva.",
+ macete:"'Devido processo legal' é cláusula constitucional (art. 5º, LIV/LV CF) que aparece no Estatuto sempre que se trata de avaliação de conduta/honra — nunca dispensável por 'avaliação subjetiva'."},
+
+// ============================================================
+// PROVA REAL CEBRASPE/CESPE - PM/MA 2017 (itens 61 a 85)
+// ============================================================
+{id:"prova2017_61", tema:"Hierarquia", artigo:"Art. 19, §1º e §2º", tipo:"CE", prova:"CEBRASPE PM-MA 2017 (Q.61)",
+ enunciado:"Posto e graduação são graus hierárquicos conferidos por ato do comandante-geral da Polícia Militar, sendo os de oficiais confirmados em carta patente.",
+ correta:false,
+ explicacao:"Errado. POSTO (oficial) é conferido por DECRETO DO GOVERNADOR e confirmado em Carta Patente (art.19,§1º). Apenas a GRADUAÇÃO (praça) é conferida por ato do Comandante-Geral (art.19,§2º). A questão erra ao atribuir AMBOS ao Comandante-Geral.",
+ macete:"POSTO = Governador (decreto) + Carta Patente. GRADUAÇÃO = Comandante-Geral (ato). Não são a mesma autoridade — a questão tenta unificar os dois em 'comandante-geral', o que é falso para posto."},
+
+{id:"prova2017_62", tema:"Hierarquia", artigo:"Art. 21, §1º e §3º", tipo:"CE", prova:"CEBRASPE PM-MA 2017 (Q.62)",
+ enunciado:"Situação hipotética: O soldado João ingressou na PM/MA em 2010; e o soldado Pedro, em 2011. Após fazer o curso de formação de cabos em 2014, João obteve a última classificação. Pedro fez o referido curso em 2015, obtendo a primeira colocação. Posteriormente, ambos foram promovidos a cabo na mesma data. Assertiva: Nessa situação, o soldado João terá precedência em relação a Pedro, por efeito de antiguidade, tendo ambos precedência sobre os cabos da inatividade.",
+ correta:false,
+ explicacao:"Errado. Pelo art. 21, §1º, em caso de promoção à graduação de Cabo, prevalece para efeito de antiguidade a ORDEM DE CLASSIFICAÇÃO obtida no respectivo curso — não a data de ingresso na corporação. Como Pedro obteve a 1ª colocação no CFC (em 2015) e João a última (em 2014), Pedro tem precedência sobre João, e não o contrário. A segunda parte (ativa tem precedência sobre inatividade, art.21 §3º) está correta, mas a conclusão sobre João x Pedro está errada, tornando o item ERRADO.",
+ macete:"Quando a promoção decorre de CURSO/CONCURSO (3º Sgt, Cabo, Soldado, Aspirante), a antiguidade segue a CLASSIFICAÇÃO NO CURSO (§1º do art.21), não a data de ingresso na corporação (que é regra geral do caput). Cuidado: a banca monta uma 'cascata' de fatos plausíveis para te levar à regra geral errada."},
+
+{id:"prova2017_63", tema:"Hierarquia", artigo:"Art. 19, §3º e Art. 22, I", tipo:"CE", prova:"CEBRASPE PM-MA 2017 (Q.63)",
+ enunciado:"Aspirantes a oficial são denominados praças especiais e têm precedência sobre as demais praças.",
+ correta:true,
+ explicacao:"Certo. Art. 19, §3º: Aspirantes-a-Oficial e Cadetes são Praças Especiais. Art. 22, I: os Aspirantes-a-Oficial são hierarquicamente superiores às demais praças.",
+ macete:"Junte os dois artigos: 'Praças Especiais' (19,§3º) = Aspirante + Cadete; e Aspirante > demais praças (22,I). Frase 100% baseada no texto literal — sem trocas, está CERTA."},
+
+{id:"prova2017_64", tema:"Cargo e Função", artigo:"Art. 35, IV, d", tipo:"CE", prova:"CEBRASPE PM-MA 2017 (Q.64)",
+ enunciado:"Policial militar da ativa da Polícia Militar do Maranhão que for posto à disposição de órgão de inteligência da Polícia Militar do Piauí será considerado em exercício na função de policial militar.",
+ correta:true,
+ explicacao:"Certo. Art. 35, IV, 'd': são considerados em exercício de função policial-militar os militares da ativa colocados à disposição de órgãos de inteligência de OUTRAS Polícias Militares (no caso, a do Piauí).",
+ macete:"Art. 35, IV lista 4 destinos que mantêm o status de 'em função PM' mesmo fora do MA: Gabinetes da Presidência/Vice-Presidência da República, Estado-Maior das Forças Armadas, Secretaria de Assuntos Estratégicos, e órgãos de inteligência de OUTRAS Polícias Militares."},
+
+{id:"prova2017_65", tema:"Ingresso", artigo:"Art. 4º, §2º", tipo:"CE", prova:"CEBRASPE PM-MA 2017 (Q.65)",
+ enunciado:"Colombiano e venezuelano naturalizados brasileiros podem ser praças, mas não oficiais.",
+ correta:true,
+ explicacao:"Certo. O art. 4º, §2º reserva a carreira de OFICIAL aos brasileiros NATOS. Brasileiros naturalizados (originalmente de outra nacionalidade) podem ingressar como praças, mas não como oficiais.",
+ macete:"'Naturalizado' ≠ 'nato'. A carreira de Oficial PM é privativa de brasileiro NATO (art.4º,§2º) — naturalizados ficam restritos às graduações de praça."},
+
+{tema:"Ingresso", artigo:"Art. 15", tipo:"CE", id:"prova2017_66", prova:"CEBRASPE PM-MA 2017 (Q.66)",
+ enunciado:"A aprovação em concurso público é requisito único e indispensável para que um policial militar ingresse na graduação de terceiro sargento.",
+ correta:false,
+ explicacao:"Errado. O art. 15, I (redação da Lei 7.855/2003) prevê que o ingresso na graduação de 3º Sargento dá-se através de aprovação em CONCURSO PÚBLICO E POR PROMOÇÃO — ou seja, há DUAS vias, não apenas o concurso público como requisito 'único'.",
+ macete:"Palavra 'único' costuma ser pegadinha. O ingresso em 3º Sargento tem DUAS portas: (1) concurso público (50% das vagas, art.15,IV) e (2) promoção interna de Cabos. 'Único e indispensável' elimina a via da promoção, o que é falso."},
+
+{tema:"Compromisso", artigo:"Art. 44 e 45", tipo:"CE", id:"prova2017_67", prova:"CEBRASPE PM-MA 2017 (Q.67)",
+ enunciado:"Após ingressar na polícia militar, o cidadão terá de prestar compromisso de honra em ato de caráter solene na presença da tropa, firmando a sua aceitação consciente das obrigações e dos deveres dos policiais militares.",
+ correta:true,
+ explicacao:"Certo. Combinação dos arts. 44 (compromisso de honra com aceitação consciente das obrigações/deveres) e 45 (caráter solene, na presença da tropa).",
+ macete:"Frase-padrão do compromisso geral: 'caráter solene' + 'presença da tropa' + 'aceitação consciente das obrigações e deveres' — junção literal dos arts. 44 e 45."},
+
+{tema:"Violação de Deveres", artigo:"Art. 55, §2º", tipo:"CE", id:"prova2017_68", prova:"CEBRASPE PM-MA 2017 (Q.68)",
+ enunciado:"O soldado que praticar conduta que configure concurso de crime militar e transgressão disciplinar será sancionado com a pena relativa ao crime, cumulativamente com a punição referente à transgressão.",
+ correta:false,
+ explicacao:"Errado. O art. 55, §2º determina que, no concurso de crime militar e transgressão disciplinar, será aplicada SOMENTE a pena relativa ao crime — NÃO há cumulação com a punição disciplinar.",
+ macete:"'Cumulativamente' é a palavra-chave da pegadinha. Concurso crime x transgressão = aplica-se SÓ a pena do crime (princípio do non bis in idem / absorção)."},
+
+{tema:"Violação de Deveres", artigo:"Art. 56, §1º e Art. 57, §1º", tipo:"CE", id:"prova2017_69", prova:"CEBRASPE PM-MA 2017 (Q.69)",
+ enunciado:"O soldado que, por sua atuação, demonstrar incapacidade no desempenho das funções policiais militares a ele inerentes poderá ser afastado do cargo ou da função pelo comandante do batalhão ao qual for subordinado. No período de afastamento, ele ficará privado do exercício de qualquer função policial militar, até a solução final das providências legais que couberem no caso.",
+ correta:false,
+ explicacao:"Errado. A segunda parte (privação do exercício de função até solução final, art.57,§2º) está correta. Porém, a competência para determinar o AFASTAMENTO não é do 'comandante do batalhão' — o art. 57, §1º lista como competentes apenas: Governador do Estado, Gerente de Estado de Segurança Pública e Comandante-Geral da Polícia Militar. 'Comandante do batalhão' não está nessa lista.",
+ macete:"As 3 autoridades do art.57,§1º são SEMPRE de nível ESTADUAL/cúpula: Governador, Gerente de Segurança Pública, Comandante-Geral. Qualquer autoridade 'local' (comandante de batalhão, delegado, etc.) citada como competente para afastamento está ERRADA."},
+
+{tema:"Conselhos", artigo:"Art. 61, §3º", tipo:"CE", id:"prova2017_70", prova:"CEBRASPE PM-MA 2017 (Q.70)",
+ enunciado:"As praças da reserva remunerada estão sujeitas ao Conselho de Disciplina.",
+ correta:true,
+ explicacao:"Certo. O art. 61, §3º estabelece que o Conselho de Disciplina também poderá ser aplicado às praças da RESERVA REMUNERADA e REFORMADOS.",
+ macete:"Tanto o Conselho de Justificação (art.60,§3º — oficiais) quanto o Conselho de Disciplina (art.61,§3º — praças) têm extensão expressa à RESERVA REMUNERADA e REFORMADOS. Memorize: 'a disciplina não acaba na inatividade' (já visto no art.17,§3º)."},
+
+{tema:"Ética e Obrigações", artigo:"Art. 42", tipo:"CE", id:"prova2017_71", prova:"CEBRASPE PM-MA 2017 (Q.71)",
+ enunciado:"O comandante-geral da Polícia Militar do Maranhão deverá determinar, de ofício, que o policial militar incorporado à instituição informe a origem e a natureza dos seus bens.",
+ correta:false,
+ explicacao:"Errado. O art. 42 diz que o Comandante-Geral 'PODERÁ determinar... SEMPRE QUE HOUVER RAZÕES QUE RECOMENDEM TAL MEDIDA' — é uma faculdade condicionada, não um dever automático ('deverá... de ofício') aplicável a todo militar incorporado.",
+ macete:"'Poderá... quando houver razões' (discricionário e condicionado) ≠ 'deverá... de ofício, sempre' (obrigatório e automático). Troca clássica de modal verb — sempre confira 'pode' vs 'deve' e se há condicionantes."},
+
+{tema:"Promoção", artigo:"Art. 78, §3º", tipo:"CE", id:"prova2017_72", prova:"CEBRASPE PM-MA 2017 (Q.72)",
+ enunciado:"Se um policial militar for promovido em desacordo com a legislação vigente, o ato poderá ser válido, desde que o policial seja enquadrado no respectivo posto ou na graduação como último na precedência, até alcançar as condições legais para promoção.",
+ correta:false,
+ explicacao:"Errado. O art. 78, §3º é categórico: 'É NULO DE PLENO DIREITO' a promoção em desacordo com a legislação vigente. Não existe a possibilidade de 'validar' o ato enquadrando o militar como último na precedência — essa é uma solução inventada pela questão, sem base legal.",
+ macete:"'Nulo de pleno direito' = nulidade ABSOLUTA, não admite 'salvamento' ou 'aproveitamento parcial' do ato. Qualquer alternativa que ofereça uma 'saída' para validar promoção irregular está ERRADA."},
+
+{tema:"Remuneração - Outros direitos", artigo:"Art. 69, parágrafo único", tipo:"CE", id:"prova2017_73", prova:"CEBRASPE PM-MA 2017 (Q.73)",
+ enunciado:"Somente cadetes, cabos e soldados fazem jus ao fardamento da polícia militar.",
+ correta:true,
+ explicacao:"Certo. O art. 69, parágrafo único restringe o direito ao fardamento (inciso V) exclusivamente a Cadetes, Cabos e Soldados.",
+ macete:"Fardamento custeado = Cadete + Cabo + Soldado (as 3 'pontas' mais baixas da carreira). Oficiais e Sargentos/Subtenentes não estão nessa lista."},
+
+{tema:"Salário-Família", artigo:"Art. 87, II e III", tipo:"CE", id:"prova2017_74", prova:"CEBRASPE PM-MA 2017 (Q.74)",
+ enunciado:"São considerados dependentes econômicos dos policiais militares, para efeito de percepção do salário-família, todos os filhos de até vinte e cinco anos de idade, além do pai e da mãe sem economia própria.",
+ correta:false,
+ explicacao:"Errado. O art. 87, II estabelece limites de 21 ANOS (regra geral) ou 24 ANOS (se estudante) para os filhos — não 25 anos 'todos'. A parte sobre pai/mãe sem economia própria (inciso III) está correta, mas a idade dos filhos está incorreta.",
+ macete:"Idades dos filhos como dependentes: 21 anos (regra geral) / 24 anos (se estudante) / sem limite (se inválido). '25 anos' não existe nessa lista — é número 'vizinho' inventado para confundir com 24."},
+
+{tema:"Direitos - Político", artigo:"Art. 64, §1º, II", tipo:"CE", id:"prova2017_75", prova:"CEBRASPE PM-MA 2017 (Q.75)",
+ enunciado:"Se pretender candidatar-se a cargo eletivo, o policial militar que tiver acima de cinco anos de serviço será agregado pela autoridade superior; caso eleito, ele passará automaticamente para a inatividade no ato da diplomação.",
+ correta:false,
+ explicacao:"Errado. O marco temporal correto é de MAIS DE 10 ANOS de serviço (art.64,§1º,II e art.106,§1º,'m'), não 'acima de cinco anos'. Com menos de 10 anos, o militar deve AFASTAR-SE da atividade (inciso I), não ser agregado.",
+ macete:"O número-chave para candidatura é 10 ANOS (não 5). <10 anos → afasta-se; >10 anos → agrega-se e, se eleito, inatividade na diplomação. '5 anos' é valor trocado propositalmente."},
+
+{tema:"Direitos - Político", artigo:"Art. 64, caput", tipo:"CE", id:"prova2017_76", prova:"CEBRASPE PM-MA 2017 (Q.76)",
+ enunciado:"Todos os policiais militares são alistáveis como eleitores.",
+ correta:true,
+ explicacao:"Certo. Art. 64, caput: 'São alistáveis, como eleitores, todos os policiais-militares.' Reprodução literal — ser alistável (poder votar) é diferente de ser ELEGÍVEL (poder se candidatar), que tem condições específicas (§1º).",
+ macete:"ALISTÁVEL (votar) = TODOS, sem condição. ELEGÍVEL (candidatar-se) = condicionado ao tempo de serviço (10 anos, art.64,§1º). Não confunda os dois conceitos!"},
+
+{tema:"Licenças", artigo:"Art. 93, §2º", tipo:"CE", id:"prova2017_77", prova:"CEBRASPE PM-MA 2017 (Q.77)",
+ enunciado:"O gozo de licença-prêmio anula o direito do policial militar a licença para tratamento de saúde de pessoa da família no mesmo período.",
+ correta:false,
+ explicacao:"Errado. O art. 93, §2º diz justamente o contrário: o gozo da licença-prêmio NÃO ANULA o direito a outras licenças, EXCETO a prevista no item II do art. 92 (licença para tratamento de saúde EM PESSOA DA FAMÍLIA é precisamente essa exceção!). Atenção: a redação do §2º é sutil — ele diz que a licença-prêmio 'não anula o direito àquelas licenças, exceto a licença prevista no item II do art.92'. Ou seja, o gozo da licença-prêmio NÃO interrompe a CONTAGEM de tempo nem é prejudicada por outras licenças anteriores, mas o item II é a EXCEÇÃO que fica de fora dessa proteção. Mesmo assim, a assertiva afirma que a licença-prêmio 'anula' o direito à licença de saúde de família de forma direta e ativa, o que não corresponde à descrição da norma (que trata de não prejuízo recíproco entre licenças, com uma exceção pontual) — a banca considerou ERRADO.",
+ macete:"Este é um dos artigos mais 'tortos' do Estatuto (art.93,§2º). Regra geral: licença-prêmio NÃO prejudica nem é prejudicada por outras licenças — com uma única exceção textual (licença de saúde de pessoa da família, art.92,II). Releia o §2º várias vezes antes da prova; é candidato certo a questão 'casca de banana'."},
+
+{tema:"Licenças", artigo:"Art. 98", tipo:"CE", id:"prova2017_78", prova:"CEBRASPE PM-MA 2017 (Q.78)",
+ enunciado:"A licença-paternidade em gozo pelo policial militar poderá ser interrompida em caso de decretação de estado de defesa, sendo vedada a interrupção dessa licença para o cumprimento de punição disciplinar.",
+ correta:false,
+ explicacao:"Errado. A primeira parte está correta (art.98,'a' permite interrupção em caso de estado de defesa). Porém, a segunda parte é falsa: o art. 98, 'c' PERMITE expressamente a interrupção da licença-paternidade (e prêmio e interesse particular) para CUMPRIMENTO DE PUNIÇÃO DISCIPLINAR — não há vedação.",
+ macete:"O art.98 lista 4 hipóteses de interrupção (a,b,c,d) que se aplicam a TODAS as 3 licenças interrompíveis (prêmio, paternidade, interesse particular) igualmente — não há tratamento diferenciado por tipo de licença dentro dessas hipóteses. 'É vedada a interrupção para X' é quase sempre falso quando X está no rol do art.98."},
+
+{tema:"Licenças", artigo:"Art. 94", tipo:"CE", id:"prova2017_79", prova:"CEBRASPE PM-MA 2017 (Q.79)",
+ enunciado:"A licença para tratamento de saúde de pessoa da família pode ser concedida ao policial militar para acompanhamento de seus dependentes em tratamento de saúde.",
+ correta:true,
+ explicacao:"Certo. Art. 94, caput: a licença é concedida ao militar que a requerer 'com a finalidade de acompanhar seus dependentes em tratamento de saúde'.",
+ macete:"Questão 'cópia literal' do art.94 — confirma a finalidade (acompanhar dependente em tratamento) sem alterar nenhum elemento. Quando a banca usa exatamente as palavras da lei sem trocar nada, geralmente é CERTO."},
+
+{tema:"Agregação", artigo:"Art. 106, caput e §8º", tipo:"CE", id:"prova2017_80", prova:"CEBRASPE PM-MA 2017 (Q.80)",
+ enunciado:"Estando agregado, o policial militar não poderá ocupar vaga na escala hierárquica do seu quadro nem poderá ser promovido enquanto permanecer nessa situação.",
+ correta:true,
+ explicacao:"Certo. Combinação do art.106, caput ('deixa de ocupar vaga na escala hierárquica do seu quadro, nela permanecendo sem número') e §8º ('o militar agregado não poderá ser promovido enquanto durar a sua agregação').",
+ macete:"Agregado = 'sem vaga' (caput) + 'sem promoção' (§8º) — os dois efeitos centrais da agregação, sempre cobrados juntos."},
+
+{tema:"Agregação", artigo:"Art. 107", tipo:"CE", id:"prova2017_81", prova:"CEBRASPE PM-MA 2017 (Q.81)",
+ enunciado:"É competência indelegável do governador do estado do Maranhão a agregação de policiais militares.",
+ correta:false,
+ explicacao:"Errado. O art. 107 diz que a agregação se faz por ato do Governador do Estado OU DE AUTORIDADE À QUAL TENHAM SIDO DELEGADOS PODERES PARA TAL — ou seja, é expressamente DELEGÁVEL, não 'indelegável'.",
+ macete:"Vários atos do Governador no Estatuto admitem delegação ('ou de autoridade à qual tenham sido delegados poderes' — arts.107, 115 parágrafo único, etc.). Palavra 'indelegável' aplicada a esses atos está quase sempre ERRADA."},
+
+{tema:"Deserção", artigo:"Art. 144, §2º", tipo:"CE", id:"prova2017_82", prova:"CEBRASPE PM-MA 2017 (Q.82)",
+ enunciado:"A praça desertora, com ou sem estabilidade, será automaticamente excluída do serviço ativo logo após a declaração oficial dessa condição.",
+ correta:false,
+ explicacao:"Errado. A exclusão AUTOMÁTICA após a declaração oficial de deserção (art.144,§2º) aplica-se apenas à praça SEM ESTABILIDADE ASSEGURADA. A praça COM estabilidade assegurada (e o oficial) seguem o §1º: demissão/exclusão somente após 1 ANO de agregação, se não houver captura/apresentação voluntária antes.",
+ macete:"'Com ou sem estabilidade' tratados igualmente é a pegadinha. SEM estabilidade → exclusão automática e imediata (§2º). COM estabilidade → espera de 1 ano de agregação (§1º). Tratamentos DIFERENTES!"},
+
+{tema:"Exclusão a Bem da Disciplina", artigo:"Art. 143, parágrafo único", tipo:"CE", id:"prova2017_83", prova:"CEBRASPE PM-MA 2017 (Q.83)",
+ enunciado:"Praça excluída a bem da disciplina fará jus a indenização correspondente ao tempo de serviço ativo.",
+ correta:false,
+ explicacao:"Errado. O art. 143, parágrafo único é expresso: a praça excluída a bem da disciplina NÃO TERÁ DIREITO A QUALQUER REMUNERAÇÃO OU INDENIZAÇÃO.",
+ macete:"Exclusão a bem da disciplina = SEM remuneração e SEM indenização (igual à demissão a pedido do oficial com <5 anos sem o benefício, e ao licenciamento — todas as 'saídas por mau comportamento/abandono' tendem a zerar direitos remuneratórios)."},
+
+{tema:"Licenciamento", artigo:"Art. 139, §4º", tipo:"CE", id:"prova2017_84", prova:"CEBRASPE PM-MA 2017 (Q.84)",
+ enunciado:"A praça sem estabilidade assegurada que ingressar no mau comportamento será licenciada a bem da disciplina.",
+ correta:true,
+ explicacao:"Certo. Art. 139, §4º (redação Lei 8.080/2004): 'O licenciamento a bem da disciplina será aplicado às praças sem estabilidade assegurada, que ingressarem no MAU comportamento...'.",
+ macete:"Reprodução quase literal do art.139,§4º. Lembre: praça SEM estabilidade + mau comportamento = LICENCIAMENTO a bem da disciplina (ato do Governador ou delegado) — diferente da EXCLUSÃO a bem da disciplina, que é para quem TEM estabilidade (art.141)."},
+
+{tema:"Tempo de Serviço", artigo:"Art. 151, §2º, I", tipo:"CE", id:"prova2017_85", prova:"CEBRASPE PM-MA 2017 (Q.85)",
+ enunciado:"O tempo que exceder a seis meses de benefício não será computado, para nenhum efeito, no caso do policial militar que permanecer em gozo de licença para tratamento de saúde de pessoa da família.",
+ correta:true,
+ explicacao:"Certo. Art. 151, §2º, I (redação Lei 8.362/2005): não é computável para efeito algum o tempo que ultrapassar 6 MESES, contínuo ou não, em licença para tratamento de saúde de pessoa da família.",
+ macete:"Combine com o art.106,§1º,'d': 6 meses dessa licença já gera AGREGAÇÃO; e o que passar de 6 meses tampouco conta como tempo de serviço (art.151,§2º,I). O número '6 meses' aparece nos dois artigos com efeitos diferentes mas complementares."},
+];
+
+// ============================================================
+// MACETES TEMÁTICOS (resumo geral)
+// ============================================================
+// ============================================================
+// SITUAÇÕES HIPOTÉTICAS — estilo CEBRASPE
+// Cada tema tem um pool de contextos narrativos com personagens,
+// cargos e situações realistas. A função buildEnunciado()
+// combina o contexto com a assertiva da questão.
+// ============================================================
+const SITUACOES = {
+  "Hierarquia": [
+    {ctx:"O 2º Sargento PM Marcos Aurélio, integrante do 3º Batalhão da PM/MA, foi convocado para participar de uma reunião de planejamento operacional envolvendo militares de diferentes quadros e situações funcionais."},
+    {ctx:"O Capitão PM Rodrigo da Silva, do Círculo de Oficiais Intermediários, e o Subtenente PM Evaristo Nunes, do Círculo de Subtenentes e Sargentos, tiveram um desentendimento formal a respeito de precedência em ato solene."},
+    {ctx:"Durante processo de elaboração da ordem do dia, o Tenente-Coronel PM Fausto Ramos verificou que havia dúvida sobre a precedência entre militares com a mesma data de promoção ao posto de Major."},
+    {ctx:"O Aspirante-a-Oficial PM Leandro Costa foi recentemente declarado pela Academia de Polícia Militar do Maranhão e assumiu suas funções no quartel."},
+    {ctx:"A Coronel PM Adriana Mendes, ocupante do último posto do Quadro de Oficiais Superiores, e o Subtenente PM Raimundo Araújo, mais antigo na graduação, integraram a mesma formatura."},
+  ],
+  "Ingresso": [
+    {ctx:"Caio, brasileiro nato, e Miriam, brasileira naturalizada de origem colombiana, ambos com 26 anos e ensino médio completo, inscreveram-se no concurso público para ingresso na PM/MA e foram aprovados nas provas escritas."},
+    {ctx:"Um candidato ao Curso de Formação de Oficiais da PM/MA obteve aprovação em todas as etapas do concurso público, mas apresentava altura de 1,63 m e idade de 29 anos na data de encerramento das inscrições."},
+    {ctx:"O Subtenente PM Aldo Vasconcelos, com 19 anos de efetivo serviço e 3 anos na graduação, foi indicado para participar do processo seletivo interno para ingresso no Quadro de Oficiais de Administração."},
+    {ctx:"Dois candidatos civis, Fernando e Sílvio, foram aprovados no concurso para o Curso de Formação de Sargentos da PM/MA e aguardavam sua situação funcional durante o período do curso."},
+  ],
+  "Cargo e Função": [
+    {ctx:"O Coronel PM Antônio Siqueira foi designado pelo Governador do Estado para exercer o cargo de Chefe do Estado-Maior da PM/MA, acumulando as funções de Subcomandante da Corporação."},
+    {ctx:"O 1º Tenente PM Bruno Lacerda foi nomeado para exercer cargo não previsto no Quadro de Organização da Corporação, em função criada por necessidade administrativa transitória."},
+    {ctx:"O Major PM Clodoaldo Ferro recebeu designação para exercer cargo em comissão no gabinete do Presidente do Tribunal de Justiça do Estado do Maranhão."},
+    {ctx:"O Cabo PM Demétrio Souza encontrava-se no exercício de cargo cujo ocupante anterior havia sido considerado desertor há três semanas."},
+  ],
+  "Ética e Obrigações": [
+    {ctx:"O Sargento PM Ezequiel Moura, ao ser abordado por um comerciante que oferecia vantagem financeira em troca de favorecimento, utilizou seu posto para negociar condições favoráveis ao referido estabelecimento."},
+    {ctx:"O Capitão PM Fábio Leal, da reserva remunerada convocada, aproveitou uma visita a repartição pública civil para tratar de interesses comerciais de uma empresa da qual era sócio-gerente."},
+    {ctx:"O Major PM Gilberto Carneiro, integrante do Quadro de Saúde da PM/MA, passou a atender pacientes em consultório particular durante seus dias de folga, sem prejuízo de suas atividades militares."},
+    {ctx:"O Soldado PM Henrique Torres, mesmo fora do serviço, praticou atos que comprometeram o decoro da classe policial-militar, gerando procedimento de apuração."},
+  ],
+  "Violação de Deveres": [
+    {ctx:"O Soldado PM Ítalo Borges foi enquadrado simultaneamente em crime militar e em transgressão disciplinar decorrentes da mesma conduta praticada durante o serviço."},
+    {ctx:"O Tenente PM Jonas Alves, por sua conduta reiterada, demonstrou incompatibilidade com o cargo que exercia, levando a administração militar a considerar seu afastamento."},
+    {ctx:"O Cabo PM Kléber Matos foi autuado em flagrante por autoridade policial civil durante uma blitz de trânsito, sendo recolhido a uma delegacia da capital."},
+  ],
+  "Crimes e Transgressões": [
+    {ctx:"O 2º Tenente PM Lúcio Sampaio foi denunciado por crime militar enquanto atuava em operação de policiamento ostensivo na área urbana de São Luís."},
+    {ctx:"O Cabo PM Márcio Ferreira recebeu punição disciplinar de detenção pelo período de 35 dias, aplicada pelo seu superior hierárquico imediato."},
+  ],
+  "Conselhos": [
+    {ctx:"O Major PM Nílson Coelho, oficial da ativa presumivelmente incapaz de permanecer no serviço ativo em razão de conduta funcional questionável, foi submetido a processo administrativo pela Corporação."},
+    {ctx:"A Praça Especial PM Otávio Brito, com estabilidade assegurada, foi submetida a processo por suposta incapacidade de permanecer no serviço ativo, sendo afastada de suas atividades."},
+    {ctx:"O Subtenente PM Paulo Ribeiro, da reserva remunerada, foi investigado por conduta supostamente incompatível com sua condição de inativo da PM/MA."},
+  ],
+  "Direitos": [
+    {ctx:"A Major PM Quitéria Fonseca, com 26 anos de efetivo serviço e sexo feminino, solicitou à administração da PM/MA informações sobre seus direitos relativos à transferência para a reserva remunerada e ao valor de seus proventos."},
+    {ctx:"O Cabo PM Renato Durão, com 11 anos de efetivo serviço, ajuizou ação reivindicando direito à estabilidade e ao porte de arma, além de questionar ato administrativo de seu superior."},
+    {ctx:"O 1º Tenente PM Sérgio Faria foi informado de que uma promoção prevista para ele havia sido concedida a outro militar em desacordo com os critérios legais."},
+  ],
+  "Direitos - Político": [
+    {ctx:"O Soldado PM Tadeu Maciel, com 7 anos de serviço, manifestou intenção de se candidatar a vereador nas próximas eleições municipais. O Sargento PM Ulisses Campos, com 14 anos de serviço, também desejava se candidatar ao mesmo cargo."},
+    {ctx:"O Coronel PM Valdemiro Aguiar, durante período eleitoral, compareceu fardado a comício de determinado partido político, sendo questionado sobre a legalidade de sua conduta."},
+  ],
+  "Remuneração": [
+    {ctx:"O Subtenente PM Wellington Barros, ao analisar seu contracheque, verificou diferenças entre os componentes da remuneração que lhe eram devidos na ativa e os proventos que passaria a receber na inatividade."},
+    {ctx:"O Cadete PM Xavier Lopes, do 2º ano da Academia de Polícia Militar do Maranhão, questionou a qual gratificação teria direito e em que valor durante seu período de formação."},
+  ],
+  "Remuneração - Gratificações": [
+    {ctx:"Ao elaborar a folha de pagamento de sua unidade, o Tesoureiro PM identificou dúvida quanto à classificação de determinadas vantagens pecuniárias como gratificações ou indenizações para os policiais-militares."},
+  ],
+  "Remuneração - GEM": [
+    {ctx:"O Cadete PM Yuri Medeiros, matriculado no 3º ano da Academia de Polícia Militar do Maranhão, indagou ao setor de pessoal qual seria o valor da Gratificação Especial Militar (GEM) a que teria direito."},
+  ],
+  "Remuneração - Indenizações": [
+    {ctx:"O Contador da PM/MA, ao elaborar o demonstrativo de remuneração dos policiais-militares, precisou distinguir quais parcelas constituíam gratificações e quais eram indenizações previstas no Estatuto."},
+  ],
+  "Remuneração - Outros direitos": [
+    {ctx:"O Sargento PM Zacarias Melo, ao receber a convocação para período de instrução, verificou que havia divergência sobre quais itens de remuneração lhe seriam assegurados, em especial quanto ao fardamento."},
+  ],
+  "Remuneração - Garantias": [
+    {ctx:"O 1º Sargento PM Abílio Cruz questionou à assessoria jurídica da PM/MA se seus vencimentos poderiam ser objeto de desconto em razão de dívidas civis contraídas antes do ingresso na Corporação."},
+  ],
+  "Remuneração - Adicional": [
+    {ctx:"O Subtenente PM Benedito Lira, com 22 anos de efetivo serviço público estadual, solicitou ao setor financeiro o cálculo correto do adicional por tempo de serviço ao qual teria direito."},
+  ],
+  "Remuneração - Soldo": [
+    {ctx:"Ao analisar o contracheque do Soldado PM Caetano Neves, da reserva remunerada convocada, foi identificada divergência entre o soldo pago a ele e o pago ao Soldado PM da ativa de mesmo grau hierárquico."},
+  ],
+  "Promoção": [
+    {ctx:"O Tenente PM Dário Assis e o Tenente PM Elias Melo disputavam a promoção ao posto de Capitão por critérios de merecimento. Verificou-se posteriormente que um dos atos de promoção havia sido praticado em desacordo com a legislação."},
+    {ctx:"O Cabo PM Fausto Rocha foi morto em serviço durante operação policial. Seus familiares e a administração da PM/MA discutiram os efeitos de uma promoção post mortem ao posto seguinte."},
+  ],
+  "Férias": [
+    {ctx:"O 2º Tenente PM Geraldo Bentes, com 8 meses de efetivo exercício na Corporação, solicitou a concessão de suas férias anuais de 30 dias. Seu superior indagou se o direito já havia sido adquirido."},
+    {ctx:"O Sargento PM Herculano Pinto acumulou férias por dois anos consecutivos em razão de grave perturbação da ordem pública que impediu o gozo no período previsto."},
+  ],
+  "Afastamentos": [
+    {ctx:"O Cabo PM Isidoro Tavares contraiu matrimônio e solicitou afastamento para a lua de mel. Semanas depois, perdeu seu pai e necessitou de novo afastamento. Seu superior questionou os prazos legais aplicáveis."},
+    {ctx:"O Major PM Juvêncio Dantas foi transferido de São Luís para o interior do Maranhão e solicitou os períodos de trânsito e instalação previstos no Estatuto."},
+  ],
+  "Salário-Família": [
+    {ctx:"O Sargento PM Kléverson Pontes e sua esposa, também policial-militar, viviam juntos e tinham dois filhos: um de 20 anos, estudante universitário, e outro de 23 anos, sem atividade remunerada. Ambos requereram o salário-família."},
+    {ctx:"A filha inválida do Coronel PM Leandro Vaz completou 30 anos. A administração questionou se a dependência econômica para fins de salário-família havia cessado."},
+  ],
+  "Licenças": [
+    {ctx:"O Cabo PM Moacir Esteves solicitou licença-prêmio referente ao seu segundo quinquênio de serviço e, no mesmo período, precisou acompanhar seu pai idoso em tratamento de saúde de alta complexidade."},
+    {ctx:"A Soldado PM Nátaly Freitas, gestante, solicitou informações sobre a licença a que teria direito e se seu vencimento seria mantido integralmente durante o período."},
+    {ctx:"O Subtenente PM Olavo Braga, com 12 anos de efetivo serviço, requereu licença para tratar de interesse particular por 18 meses, com a pretensão de abrir um negócio próprio."},
+    {ctx:"O Tenente PM Péricles Monteiro, em gozo de licença-paternidade, foi surpreendido por Decreto estadual que decretou estado de defesa em razão de grave crise de segurança pública."},
+  ],
+  "Prerrogativas": [
+    {ctx:"O Sargento PM Quintino Leão, ao cometer infração de trânsito fardado, foi abordado por agente de segurança pública civil que determinou sua detenção na delegacia local."},
+    {ctx:"O Major PM Romário Cunha foi condenado em processo criminal e a autoridade competente deliberou sobre o local de cumprimento da pena privativa de liberdade."},
+  ],
+  "Uniformes": [
+    {ctx:"O Coronel PM Silvério Queiroz, na inatividade, foi convidado para discursar em evento político-partidário e compareceu utilizando o uniforme completo da PM/MA com todas as insígnias."},
+    {ctx:"Um empresário civil foi flagrado utilizando uniforme com insígnias da PM/MA em sua empresa de segurança privada, alegando tratar-se de uniforme apenas 'inspirado' no da Corporação."},
+  ],
+  "Agregação": [
+    {ctx:"O Capitão PM Tobias Figueiredo foi condenado à pena de 8 meses de suspensão do exercício do posto por sentença transitada em julgado, enquanto aguardava julgamento de outro processo criminal."},
+    {ctx:"O Sargento PM Ulisses Meireles foi submetido a tratamento de saúde contínuo que perdurou por 14 meses, ultrapassando o prazo previsto no Estatuto sem perspectiva de retorno imediato."},
+    {ctx:"O Tenente PM Vitor Albuquerque candidatou-se a cargo eletivo após 12 anos de serviço na PM/MA. Após a eleição, a administração analisou sua situação funcional para fins de inativação."},
+  ],
+  "Reversão": [
+    {ctx:"O Sargento PM Wagner Lima, que havia sido agregado em razão de cargo público civil temporário, retornou à PM/MA após 18 meses de afastamento. O Quadro de seu grau hierárquico estava com efetivo completo."},
+  ],
+  "Excedente": [
+    {ctx:"O Cabo PM Xisto Ramos foi promovido por bravura em operação policial de alto risco, mas não havia vaga disponível no Quadro correspondente à nova graduação."},
+  ],
+  "Ausente e Desertor": [
+    {ctx:"O Soldado PM Ygor Santos não compareceu à sua Organização Policial-Militar por 30 horas sem comunicar qualquer motivo, sendo posteriormente declarado desertor após esgotado o prazo legal."},
+  ],
+  "Desaparecido/Extraviado": [
+    {ctx:"O Cabo PM Zé Augusto Lemos desapareceu durante operação em área de mata fechada no interior do Maranhão. Passados os primeiros dias sem notícias, a Corporação iniciou os procedimentos legais para apurar sua situação."},
+  ],
+  "Desligamento": [
+    {ctx:"O Major PM Álvaro Braga foi transferido para a reserva remunerada em razão de ter completado 8 anos no último posto de seu quadro. A administração analisou eventuais indenizações pendentes com a Fazenda Estadual."},
+  ],
+  "Reserva Remunerada": [
+    {ctx:"A Major PM Beatriz Lemos, com 25 anos de contribuição e sexo feminino, solicitou transferência voluntária para a reserva remunerada. Havia realizado curso de especialização de 10 meses custeado pelo Estado, concluído há 1 ano."},
+    {ctx:"O Coronel PM Cássio Drummond completou 62 anos de idade estando no último posto do quadro de combatentes, gerando dúvida sobre qual dispositivo legal determinaria sua passagem para a inatividade."},
+  ],
+  "Reforma - Idades": [
+    {ctx:"O Subtenente PM Davi Nogueira completou 60 anos de idade e foi transferido para a reserva remunerada. Alguns anos depois, atingiu a idade-limite de permanência na reserva remunerada prevista no Estatuto."},
+  ],
+  "Reforma - Incapacidade": [
+    {ctx:"O Soldado PM Érico Cavalcante, ferido em operação policial de preservação da ordem pública, foi submetido a junta médica militar que deliberou sobre sua incapacidade definitiva para o serviço ativo."},
+    {ctx:"O 1º Sargento PM Fabiano Gomes foi diagnosticado com neoplasia maligna após o ingresso na Corporação. A junta médica avaliou sua situação para fins de reforma."},
+  ],
+  "Reforma": [
+    {ctx:"O 2º Tenente PM Glauco Pereira foi declarado incapaz definitivamente por doença sem relação com o serviço policial-militar, gerando deliberação sobre o valor de seus proventos de reforma."},
+  ],
+  "Demissão": [
+    {ctx:"O Tenente PM Humberto Lages solicitou demissão voluntária do oficialato após 4 anos de serviço como oficial. A administração analisou os termos legais e eventuais indenizações devidas ao Estado."},
+  ],
+  "Indignidade/Incompatibilidade": [
+    {ctx:"O Major PM Inácio Mesquita foi condenado por Tribunal Civil à pena de 3 anos de reclusão por crime não relacionado ao serviço, com sentença transitada em julgado, gerando processo de avaliação de sua permanência no oficialato."},
+  ],
+  "Perda do Posto": [
+    {ctx:"O Capitão PM Jorge Alencar foi submetido a Conselho de Justificação ao final do qual foi considerado indigno do oficialato. O processo seguiu para o órgão competente para declaração definitiva da perda do posto e patente."},
+  ],
+  "Licenciamento": [
+    {ctx:"O Cabo PM Kelson Brito, sem estabilidade assegurada, acumulou uma série de infrações que resultaram em seu enquadramento no comportamento 'mau'. A administração analisou as providências cabíveis."},
+  ],
+  "Exclusão a Bem da Disciplina": [
+    {ctx:"O Aspirante-a-Oficial PM Lucas Dourado, com estabilidade assegurada, foi condenado à pena restritiva de liberdade de 2 anos e 6 meses por sentença transitada em julgado em processo na Justiça Militar."},
+  ],
+  "Deserção": [
+    {ctx:"O Soldado PM Marcos Vinicius, sem estabilidade assegurada, foi oficialmente declarado desertor após esgotado o prazo legal. Seu colega, o Sargento PM Neves, com estabilidade, também foi declarado desertor na mesma data."},
+  ],
+  "Falecimento/Extravio": [
+    {ctx:"O Subtenente PM Oscar Furtado desapareceu durante resgate em enchente no interior do Maranhão. Decorrido o prazo legal sem notícias, a Corporação iniciou os procedimentos de exclusão do serviço ativo."},
+  ],
+  "Tempo de Serviço": [
+    {ctx:"O Cabo PM Paulo Sérgio Monteiro ingressou na PM/MA em março de 2005 e, antes disso, havia prestado 3 anos de serviço como servidor estadual civil vinculado à previdência. A administração calculou seu tempo total para fins de inativação."},
+    {ctx:"O 1º Sargento PM Quirino Rezende ficou 8 meses em licença para tratamento de saúde de seu filho, 2 anos em licença para interesse particular, e 6 meses como desertor antes de ser recapturado."},
+  ],
+  "Recompensas": [
+    {ctx:"O Tenente PM Rafael Simões recebeu louvores por ação destacada em operação policial e foi contemplado com dispensa do serviço como forma de reconhecimento de seus bons serviços à Corporação."},
+  ],
+  "Dispensas": [
+    {ctx:"O Sargento PM Saulo Andrade recebeu dispensa do serviço como recompensa por seu desempenho exemplar, enquanto outro sargento recebeu dispensa por prescrição médica decorrente de procedimento hospitalar."},
+  ],
+  "Disposições Finais": [
+    {ctx:"O Cadete PM Túlio Barros foi desligado do Curso de Formação de Oficiais por falta de aproveitamento ao final do 2º ano, após ter sido aprovado no 1º ano com notas satisfatórias."},
+    {ctx:"Uma empresa de segurança privada sediada em São Luís passou a se intitular 'Grupo de Proteção Militar Estadual', levantando questionamentos sobre o uso de denominações que sugerissem vínculo com a PM/MA."},
+  ],
+  "Revisão Geral": [
+    {ctx:"Em concurso público para a PM/MA, foram avaliados candidatos com diferentes perfis: civis sem vínculo militar, praças da ativa, praças da reserva e dependentes de policiais-militares. Cada grupo apresentava peculiaridades quanto aos seus direitos e obrigações."},
+    {ctx:"O Secretário de Segurança Pública convocou reunião com oficiais superiores da PM/MA para discutir casos envolvendo acumulação de cargos, filiação partidária, uso de uniformes em atividades externas e critérios de promoção."},
+    {ctx:"O Serviço Jurídico da PM/MA foi consultado sobre uma série de situações envolvendo militares em diferentes situações funcionais: ativo, agregado, excedente, reserva remunerada e reformado."},
+  ],
+  "Generalidades": [
+    {ctx:"Ao elaborar relatório institucional, o setor de pessoal da PM/MA precisou classificar corretamente a situação de cada servidor militar: se na ativa ou na inatividade, e em qual modalidade específica."},
+    {ctx:"Um estudante de direito, ao analisar o Estatuto dos Policiais-Militares do Maranhão, deparou-se com diversas expressões utilizadas como equivalentes pela lei e questionou a distinção entre servidores públicos militares e civis."},
+  ],
+  "Compromisso": [
+    {ctx:"Durante cerimônia solene no pátio do 4º Batalhão da PM/MA, novos integrantes da Corporação prestaram compromisso de honra perante a tropa. Em cerimônia separada, um grupo de Aspirantes-a-Oficial prestou seu compromisso específico."},
+  ],
+  "Comando": [
+    {ctx:"Em visita de inspeção, o Coronel PM Augusto Veiga verificou que, na ausência do Comandante da Unidade, o oficial substituto de posto inferior estava exercendo o Comando da Organização Policial-Militar."},
+  ],
+  "Crimes e Transgressões":  [
+    {ctx:"O Sargento PM Ederaldo Lima foi investigado por conduta que, segundo a acusação, configurava ao mesmo tempo crime militar e transgressão disciplinar decorrentes do mesmo fato, gerando debate sobre a aplicação das penalidades."},
+  ],
+};
+
+// Nomes usados para variar os enunciados (evita repetição de personagens)
+const NOMES = [
+  "Aurélio Mendes","Beatriz Farias","Carlos Nogueira","Daniela Pinto","Eduardo Ramos",
+  "Fernanda Leal","Gustavo Braga","Helena Costa","Ítalo Ferreira","Joana Vasconcelos",
+  "Kleber Matos","Larissa Cunha","Marcos Assis","Natália Borges","Osvaldo Lima",
+  "Patrícia Souza","Quintino Barros","Rosana Melo","Sebastião Neves","Tatiana Figueiredo"
+];
+const POSTOS = [
+  "Soldado","Cabo","3º Sargento","2º Sargento","1º Sargento","Subtenente",
+  "2º Tenente","1º Tenente","Capitão","Major","Tenente-Coronel","Coronel"
+];
+let _nomeSeed = 0;
+function getPersonagem(postoHint){
+  const nome = NOMES[_nomeSeed % NOMES.length];
+  _nomeSeed++;
+  return nome;
+}
+
+function buildEnunciado(q, seed){
+  // Se já tem "Situação hipotética:" no enunciado (questões da prova real), usa como está
+  if(q.enunciado.startsWith("Situação hipotética") || q.enunciado.startsWith("Situação:")) return null;
+
+  // Busca pool de situações para o tema
+  let pool = SITUACOES[q.tema] || SITUACOES["Revisão Geral"];
+  const ctx = pool[(seed || 0) % pool.length].ctx;
+
+  // Extrai a assertiva como é (enunciado original já é uma afirmação)
+  const assertiva = q.enunciado;
+
+  return { ctx, assertiva };
+}
+
+function montarEnunciadoHTML(q, seed){
+  const built = buildEnunciado(q, seed);
+  if(!built){
+    // Questão da prova real com "Situação hipotética:" embutida — formata em dois blocos
+    const partes = q.enunciado.split(/Assertiva:/i);
+    if(partes.length === 2){
+      return `
+        <div class="q-situacao">${partes[0].trim()}</div>
+        <div class="q-assertiva"><b>Assertiva:</b> ${partes[1].trim()}</div>
+      `;
+    }
+    return `<div class="q-text">${q.enunciado}</div>`;
+  }
+  return `
+    <div class="q-situacao"><b>Situação hipotética:</b> ${built.ctx}</div>
+    <div class="q-assertiva"><b>Assertiva:</b> ${built.assertiva}</div>
+  `;
+}
+
+const MACETES = [
+{tema:"Hierarquia (arts. 17-24)",
+ texto:"Decore a escala completa em ordem decrescente: <b>Coronel → Tenente-Coronel → Major → Capitão → 1º Tenente → 2º Tenente → Aspirante-a-Oficial → Cadete (em ocasiões especiais) → Subtenente → 1º Sgt → 2º Sgt → 3º Sgt → Cabo → Soldado</b>. Posto = Oficial (Governador + Carta Patente). Graduação = Praça (Comandante-Geral). Antiguidade: promoção → graus anteriores → ingresso → nascimento (critérios em cascata)."},
+
+{tema:"Quem nomeia/decide o quê",
+ texto:"<b>GOVERNADOR</b>: nomeia Comandante-Geral (art.31), Chefe/Subchefe do Estado-Maior (art.32), provê cargos PM (art.26), promove Oficiais (art.78), exclui a bem da disciplina praças estáveis (art.142), declara perda de posto via TJ. <b>GERENTE DE SEGURANÇA PÚBLICA</b>: promove Praças (art.78). <b>COMANDANTE-GERAL</b>: regula férias (art.80), declara Aspirantes (art.24), decide sobre uso de uniforme na inatividade (art.103). <b>TRIBUNAL DE JUSTIÇA</b>: julga indignidade/perda de posto de Oficial (art.137) e recursos de Conselho de Justificação (art.60)."},
+
+{tema:"Números que mais caem (idades e prazos)",
+ texto:"<b>1,65m / 1,60m</b> = altura mínima M/F (art.9). <b>28 anos</b> = idade máxima ingresso. <b>10 anos</b> = estabilidade da praça / licença interesse particular / agregação por candidatura. <b>30/25 anos</b> = contribuição para reserva voluntária (M/F, arts.62 e 119). <b>62/57 e 60/55</b> = idades reserva compulsória Oficial/Praça M-F (art.120). <b>66/61 e 64/59</b> = idades reforma Oficial/Praça M-F (art.125) — sempre +4 em relação à reserva. <b>5%/quinquênio até 35%</b> = adicional por tempo de serviço (art.75)."},
+
+{tema:"Afastamentos vs Licenças",
+ texto:"<b>AFASTAMENTOS (art.84)</b> = eventos pontuais: Núpcias (8 dias), Luto (8 dias), Trânsito (até 30 dias), Instalação (até 10 dias). <b>LICENÇAS (art.92)</b> = mais longas e requeridas: Prêmio (3 meses/quinquênio), Saúde própria, Saúde de família (máx 6 meses, 3 sem desconto), Interesse particular (>10 anos serviço, COM prejuízo, máx 2 anos), Gestante (120 dias, sem prejuízo), Paternidade. As 3 interrompíveis pelo art.98: Prêmio, Paternidade, Interesse Particular."},
+
+{tema:"Agregação - prazos-gatilho (art.106)",
+ texto:"<b>1 ano</b> contínuo de licença saúde própria → agrega. <b>6 meses</b> de licença saúde de família OU interesse particular → agrega. <b>2 anos</b> contínuos ou não em agregação → reversão automática (art.109) ou, se em cargo civil temporário, transferência ex-offício para reserva (art.120, V). Agregado NÃO pode ser promovido (§8º). Só as alíneas a,b,c,h do §1º mantêm 'status de serviço ativo' durante a agregação (§2º)."},
+
+{tema:"Gratificações × Indenizações × Outros direitos",
+ texto:"<b>GRATIFICAÇÕES (art.67)</b>: Tempo de Serviço, Serviço Ativo, Localidade Especial, Habilitação PM, Especial Militar (GEM). <b>INDENIZAÇÕES (art.68)</b>: Representação, Compensações Orgânicas, Moradia, Risco de Vida, Etapa de Alimentação. <b>OUTROS DIREITOS (art.69)</b>: diárias, ajuda de custo, ajuda de curso, salário-família, fardamento (só Cadete/Cabo/Soldado), adicional de férias."},
+
+{tema:"Demissão × Licenciamento × Exclusão",
+ texto:"<b>DEMISSÃO (art.133)</b> = só OFICIAIS, a pedido (5+ anos sem indenização) ou ex officio. <b>LICENCIAMENTO (art.139)</b> = só PRAÇAS, a pedido ou ex officio (a bem da disciplina = praça SEM estabilidade, ato do Governador). <b>EXCLUSÃO A BEM DA DISCIPLINA (art.141)</b> = Aspirante/praça COM estabilidade, ato do Governador (art.142). <b>INDIGNIDADE/PERDA DE POSTO (art.136-137)</b> = só Oficiais, decisão do TJ."},
+
+{tema:"Reforma - causas e remuneração (arts.127-130)",
+ texto:"Causas <b>RELACIONADAS ao serviço</b> (ferimento/acidente/doença em serviço + lista de doenças graves do inciso IV) → reforma com <b>remuneração INTEGRAL</b> e qualquer tempo de serviço (arts.128-129). Causa <b>SEM relação</b> com o serviço (inciso V) → reforma <b>PROPORCIONAL</b> (art.130). Epilepsia NÃO é considerada alienação mental (§5º)."},
+
+{tema:"Direitos políticos do militar (art.64)",
+ texto:"Todos são ALISTÁVEIS (eleitores). Para ser ELEGÍVEL: <10 anos de serviço → AFASTA-SE da atividade; >10 anos → AGREGA-SE e, se eleito, passa à inatividade na diplomação. Durante a ATIVIDADE: proibida filiação partidária, sindicalização e greve (§§2º e 3º)."},
+
+{tema:"Pegadinhas frequentes da banca",
+ texto:"1) Trocar <b>Governador ↔ Comandante-Geral</b> como autoridade competente. 2) Trocar <b>'pode' por 'deve'</b> (discricionário × obrigatório). 3) Generalizar com <b>'todos', 'qualquer', 'sem exceção'</b> onde a lei restringe. 4) Citar dispositivos <b>REVOGADOS</b> (ex: 'ser solteiro' no art.9º, II) como se vigentes. 5) Trocar números próximos (28↔25, 30↔35, 6 meses↔1 ano, 8↔10 dias). 6) Inverter <b>'integral' × 'proporcional'</b> em remuneração de reforma."},
+];
+
+// ============================================================
+// SUPABASE - AUTENTICAÇÃO E SINCRONIZAÇÃO
+// ============================================================
+const SUPABASE_URL = "https://dgbkituuhzcoaftdrwyx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnYmtpdHV1aHpjb2FmdGRyd3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNDI2NDEsImV4cCI6MjA5MjgxODY0MX0.RdnTq8nANbHx-2HYWx8R71ezfL1aAoA2QZFj926O3HI";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null;
+
+// ============================================================
+// KEEP-ALIVE: pequenas requisições periódicas ao Supabase
+// para evitar que o projeto entre em pausa por inatividade.
+// ============================================================
+async function pingSupabase(){
+  try{
+    await sb.from('sessoes').select('id', { count: 'exact', head: true }).limit(1);
+  }catch(e){
+    // silencioso - apenas mantém o projeto ativo
+  }
+}
+// ping ao carregar a página
+pingSupabase();
+// ping periódico a cada 6 horas enquanto a aba estiver aberta
+setInterval(pingSupabase, 6 * 60 * 60 * 1000);
+
+async function initAuth(){
+  // Tab switching
+  document.querySelectorAll('.login-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.login-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.login-pane').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('pane-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // SIGN IN
+  document.getElementById('signinBtn').addEventListener('click', async ()=>{
+    const email = document.getElementById('signinEmail').value.trim();
+    const password = document.getElementById('signinPassword').value;
+    const msg = document.getElementById('signinMsg');
+    msg.className = 'login-msg';
+    if(!email || !password){ msg.textContent = 'Preencha e-mail e senha.'; msg.classList.add('error'); return; }
+    msg.textContent = 'Entrando...';
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){
+      msg.textContent = traduzErro(error.message);
+      msg.classList.add('error');
+    } else {
+      msg.textContent = 'Login realizado!';
+      msg.classList.add('ok');
+    }
+  });
+
+  // SIGN UP
+  document.getElementById('signupBtn').addEventListener('click', async ()=>{
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const msg = document.getElementById('signupMsg');
+    msg.className = 'login-msg';
+    if(!email || !password){ msg.textContent = 'Preencha e-mail e senha.'; msg.classList.add('error'); return; }
+    if(password.length < 6){ msg.textContent = 'A senha deve ter no mínimo 6 caracteres.'; msg.classList.add('error'); return; }
+    msg.textContent = 'Criando conta...';
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if(error){
+      msg.textContent = traduzErro(error.message);
+      msg.classList.add('error');
+    } else if(data.session){
+      msg.textContent = 'Conta criada! Entrando...';
+      msg.classList.add('ok');
+    } else {
+      msg.textContent = '✅ Conta criada! Verifique seu e-mail para confirmar antes de entrar.';
+      msg.classList.add('ok');
+    }
+  });
+
+  // MAGIC LINK
+  document.getElementById('magicBtn').addEventListener('click', async ()=>{
+    const email = document.getElementById('magicEmail').value.trim();
+    const msg = document.getElementById('magicMsg');
+    msg.className = 'login-msg';
+    if(!email){ msg.textContent = 'Digite um e-mail.'; msg.classList.add('error'); return; }
+    msg.textContent = 'Enviando link...';
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options:{ emailRedirectTo: window.location.href }
+    });
+    if(error){
+      msg.textContent = traduzErro(error.message);
+      msg.classList.add('error');
+    } else {
+      msg.textContent = '📩 Link enviado! Confira seu e-mail e clique no link para entrar.';
+      msg.classList.add('ok');
+    }
+  });
+
+  // FORGOT PASSWORD
+  document.getElementById('forgotBtn').addEventListener('click', async ()=>{
+    const email = document.getElementById('signinEmail').value.trim();
+    const msg = document.getElementById('signinMsg');
+    msg.className = 'login-msg';
+    if(!email){ msg.textContent = 'Digite seu e-mail no campo acima para receber o link de redefinição.'; msg.classList.add('error'); return; }
+    msg.textContent = 'Enviando e-mail de redefinição...';
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+    if(error){
+      msg.textContent = traduzErro(error.message);
+      msg.classList.add('error');
+    } else {
+      msg.textContent = '📩 E-mail de redefinição enviado!';
+      msg.classList.add('ok');
+    }
+  });
+
+  // Initial session check
+  const { data } = await sb.auth.getSession();
+  currentUser = data.session ? data.session.user : null;
+  applyAuthState();
+
+  // Listen for changes (login, logout, magic link redirect, password recovery)
+  sb.auth.onAuthStateChange((_event, session)=>{
+    currentUser = session ? session.user : null;
+    applyAuthState();
+    if(document.getElementById('historico') && document.getElementById('historico').classList.contains('active')){
+      renderHistorico();
+    }
+  });
+}
+
+function traduzErro(msg){
+  const map = {
+    'Invalid login credentials': 'E-mail ou senha incorretos.',
+    'User already registered': 'Este e-mail já possui cadastro. Tente fazer login.',
+    'Email not confirmed': 'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).',
+    'Password should be at least 6 characters': 'A senha deve ter no mínimo 6 caracteres.'
+  };
+  return map[msg] || msg;
+}
+
+function applyAuthState(){
+  const loginScreen = document.getElementById('loginScreen');
+  const appShell = document.getElementById('appShell');
+  if(currentUser){
+    loginScreen.style.display = 'none';
+    appShell.style.display = '';
+    renderAuthBox();
+  } else {
+    loginScreen.style.display = 'flex';
+    appShell.style.display = 'none';
+  }
+}
+
+function renderAuthBox(){
+  const box = document.getElementById('authStatus');
+  box.innerHTML = `Conectado como <b>${currentUser.email}</b> &nbsp; <button class="logout-btn" id="logoutBtn">Sair</button>`;
+  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+    await sb.auth.signOut();
+  });
+}
+
+// Salva resposta individual no Supabase (silencioso)
+async function salvarResposta(q, acertou){
+  if(!currentUser) return;
+  try{
+    await sb.from('respostas').insert({
+      user_id: currentUser.id,
+      question_id: q.id || (q.tema + '|' + q.artigo + '|' + q.enunciado.slice(0,40)),
+      tema: q.tema,
+      artigo: q.artigo,
+      acertou: acertou
+    });
+  }catch(e){ console.warn('Erro ao salvar resposta', e); }
+}
+
+// Salva resumo da sessão (rodada de quiz)
+async function salvarSessao(tema, total, acertos){
+  if(!currentUser) return;
+  try{
+    await sb.from('sessoes').insert({
+      user_id: currentUser.id,
+      tema: tema,
+      total: total,
+      acertos: acertos
+    });
+  }catch(e){ console.warn('Erro ao salvar sessão', e); }
+}
+
+// Carrega e renderiza histórico do usuário
+async function renderHistorico(){
+  const area = document.getElementById('historicoArea');
+  if(!currentUser){
+    area.innerHTML = `<div class="intro-card">
+      <h2>📊 Meu Histórico</h2>
+      <p>Faça login com seu e-mail (no topo da página) para salvar e visualizar seu rendimento online. Você receberá um link de acesso por e-mail (sem necessidade de senha).</p>
+    </div>`;
+    return;
+  }
+
+  area.innerHTML = `<div class="intro-card">Carregando seu histórico...</div>`;
+
+  const { data: sessoes, error: errS } = await sb
+    .from('sessoes')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending:false })
+    .limit(20);
+
+  const { data: respostas, error: errR } = await sb
+    .from('respostas')
+    .select('tema, acertou')
+    .eq('user_id', currentUser.id);
+
+  if(errS || errR){
+    area.innerHTML = `<div class="intro-card">Erro ao carregar histórico: ${(errS||errR).message}</div>`;
+    return;
+  }
+
+  // Estatísticas gerais
+  const totalResp = respostas.length;
+  const totalAcertos = respostas.filter(r=>r.acertou).length;
+  const pctGeral = totalResp>0 ? Math.round((totalAcertos/totalResp)*100) : 0;
+
+  // Por tema
+  const porTema = {};
+  respostas.forEach(r=>{
+    if(!porTema[r.tema]) porTema[r.tema] = {total:0, acertos:0};
+    porTema[r.tema].total++;
+    if(r.acertou) porTema[r.tema].acertos++;
+  });
+  const temasOrdenados = Object.entries(porTema).sort((a,b)=>b[1].total - a[1].total);
+
+  let html = `
+    <div class="stats-grid">
+      <div class="stat-box"><div class="num">${totalResp}</div><div class="lbl">Questões respondidas (total)</div></div>
+      <div class="stat-box"><div class="num">${totalAcertos}</div><div class="lbl">Acertos totais</div></div>
+      <div class="stat-box"><div class="num">${pctGeral}%</div><div class="lbl">Aproveitamento geral</div></div>
+      <div class="stat-box"><div class="num">${sessoes.length}</div><div class="lbl">Rodadas de quiz (últimas 20)</div></div>
+    </div>
+  `;
+
+  if(temasOrdenados.length > 0){
+    html += `<div class="intro-card"><h2>📈 Desempenho por tema</h2>`;
+    temasOrdenados.forEach(([tema, st])=>{
+      const pct = Math.round((st.acertos/st.total)*100);
+      html += `
+        <div class="tema-bar">
+          <span style="min-width:140px;">${tema}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <span>${st.acertos}/${st.total} (${pct}%)</span>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  if(sessoes.length > 0){
+    html += `<div class="intro-card"><h2>🕑 Últimas rodadas</h2>`;
+    sessoes.forEach(s=>{
+      const pct = s.total>0 ? Math.round((s.acertos/s.total)*100) : 0;
+      const cls = pct>=70 ? 'good' : (pct>=50 ? '' : 'bad');
+      const data = new Date(s.created_at).toLocaleString('pt-BR');
+      html += `
+        <div class="hist-row">
+          <span><span class="hr-tema">${s.tema}</span> — ${data}</span>
+          <span class="hr-score ${cls}">${s.acertos}/${s.total} (${pct}%)</span>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  if(totalResp === 0){
+    html += `<div class="intro-card">Você ainda não respondeu nenhuma questão. Vá para o Quiz e comece a praticar — seu progresso será salvo automaticamente!</div>`;
+  }
+
+  area.innerHTML = html;
+}
+
+// ============================================================
+// RENDERIZAÇÃO
+// ============================================================
+let currentQuiz = [];
+let currentIndex = 0;
+let answered = false;
+let sessionCorrect = 0;
+let sessionTotal = 0;
+let quizCorrect = 0;
+
+function init(){
+  document.getElementById('totalQ').textContent = QUESTOES.length;
+
+  // populate tema filter
+  const temas = [...new Set(QUESTOES.map(q=>q.tema))];
+  const sel = document.getElementById('filterTema');
+  temas.forEach(t=>{
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    sel.appendChild(opt);
+  });
+
+  renderBank();
+  renderMacetes();
+  initAuth();
+
+  document.querySelectorAll('.navbtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.view).classList.add('active');
+      if(btn.dataset.view === 'historico'){
+        renderHistorico();
+      }
+      if(btn.dataset.view === 'simulado'){
+        renderSimuladoStart();
+      }
+    });
+  });
+
+  document.getElementById('startQuiz').addEventListener('click', startQuiz);
+  document.getElementById('searchBox').addEventListener('input', renderBank);
+}
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startQuiz(){
+  const tema = document.getElementById('filterTema').value;
+  const n = parseInt(document.getElementById('numQuestoes').value);
+  let pool = tema === 'todos' ? QUESTOES : QUESTOES.filter(q=>q.tema===tema);
+  pool = shuffle(pool);
+  currentQuiz = pool.slice(0, Math.min(n, pool.length));
+  currentIndex = 0;
+  answered = false;
+  quizCorrect = 0;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const area = document.getElementById('quizArea');
+  if(currentQuiz.length === 0){
+    area.innerHTML = '<div class="intro-card">Selecione um tema/quantidade e clique em "Iniciar Quiz".</div>';
+    return;
+  }
+  if(currentIndex >= currentQuiz.length){
+    renderResults();
+    return;
+  }
+  const q = currentQuiz[currentIndex];
+  answered = false;
+  const pct = Math.round((currentIndex/currentQuiz.length)*100);
+
+  let optionsHtml = '';
+  if(q.tipo === 'CE'){
+    optionsHtml = `
+      <div class="options">
+        <div class="option" data-val="true"><div class="opt-letter">C</div><div>CERTO</div></div>
+        <div class="option" data-val="false"><div class="opt-letter">E</div><div>ERRADO</div></div>
+      </div>`;
+  } else {
+    const letters = ['A','B','C','D','E'];
+    optionsHtml = '<div class="options">' + q.opcoes.map((op,i)=>
+      `<div class="option" data-val="${i}"><div class="opt-letter">${letters[i]}</div><div>${op}</div></div>`
+    ).join('') + '</div>';
+  }
+
+  area.innerHTML = `
+    <div class="quiz-header">
+      <span>Questão ${currentIndex+1} de ${currentQuiz.length}</span>
+      <span>Acertos: ${sessionCorrect}/${sessionTotal}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="q-tag">${q.tema}</span>
+        <span class="q-tag">${q.artigo}</span>
+        ${q.prova ? `<span class="q-tag" style="color:var(--accent2);">${q.prova}</span>` : ''}
+      </div>
+      ${montarEnunciadoHTML(q, currentIndex)}
+      ${optionsHtml}
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn secondary" id="skipBtn">Pular ➜</button>
+      <button class="btn" id="nextBtn" disabled>Próxima ➜</button>
+    </div>
+  `;
+
+  document.querySelectorAll('.option').forEach(opt=>{
+    opt.addEventListener('click', ()=>selectOption(opt, q));
+  });
+  document.getElementById('nextBtn').addEventListener('click', ()=>{
+    currentIndex++;
+    renderQuestion();
+  });
+  document.getElementById('skipBtn').addEventListener('click', ()=>{
+    currentIndex++;
+    renderQuestion();
+  });
+}
+
+function selectOption(optEl, q){
+  if(answered) return;
+  answered = true;
+  sessionTotal++;
+
+  const val = optEl.dataset.val;
+  let isCorrect;
+  if(q.tipo === 'CE'){
+    isCorrect = (val === 'true') === q.correta;
+  } else {
+    isCorrect = parseInt(val) === q.correta;
+  }
+  if(isCorrect) { sessionCorrect++; quizCorrect++; }
+  salvarResposta(q, isCorrect);
+
+  document.querySelectorAll('.option').forEach(o=>{
+    o.style.cursor = 'default';
+    if(q.tipo === 'CE'){
+      const ov = o.dataset.val === 'true';
+      if(ov === q.correta) o.classList.add('correct');
+      else if(o === optEl) o.classList.add('incorrect');
+    } else {
+      const oi = parseInt(o.dataset.val);
+      if(oi === q.correta) o.classList.add('correct');
+      else if(o === optEl) o.classList.add('incorrect');
+    }
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show');
+  fb.classList.add(isCorrect ? 'correct' : 'incorrect');
+  fb.innerHTML = `
+    <div class="ftitle ${isCorrect?'ok':'bad'}">${isCorrect ? '✅ Resposta correta!' : '❌ Resposta incorreta.'}</div>
+    <div>${q.explicacao}</div>
+    <div class="macete"><b>💡 Macete:</b> ${q.macete}</div>
+    <div class="art-ref">Referência: ${q.artigo}</div>
+  `;
+
+  document.getElementById('nextBtn').disabled = false;
+  updateDashboardStats();
+}
+
+function renderResults(){
+  const area = document.getElementById('quizArea');
+  const pct = currentQuiz.length > 0 ? Math.round((quizCorrect/currentQuiz.length)*100) : 0;
+  const tema = document.getElementById('filterTema').value === 'todos' ? 'Todos os temas' : document.getElementById('filterTema').value;
+  salvarSessao(tema, currentQuiz.length, quizCorrect);
+  area.innerHTML = `
+    <div class="question-card results-box">
+      <h2>🏁 Quiz concluído!</h2>
+      <div class="big-score">${pct}%</div>
+      <p>Você acertou ${quizCorrect} de ${currentQuiz.length} questões nesta rodada.</p>
+      <div class="nav-buttons" style="margin-top:20px;">
+        <button class="btn secondary" onclick="document.getElementById('quizArea').innerHTML='';renderQuestion();">Voltar</button>
+        <button class="btn" onclick="startQuiz()">Refazer com novas questões</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// SIMULADO - 20 questões, pontuação CEBRASPE (+1/-1/0)
+// ============================================================
+const SIM_TOTAL_QUESTOES = 20;
+const SIM_PONTO_CERTO = 1;
+const SIM_PONTO_ERRADO = -1;
+const SIM_NOTA_APROVACAO = 12; // pontuação mínima (líquida) para "passar" na simulação
+
+let simQuestions = [];
+let simAnswers = []; // null = em branco, true/false = resposta marcada
+let simCurrent = 0;
+
+function renderSimuladoStart(){
+  const area = document.getElementById('simuladoArea');
+  area.innerHTML = `
+    <div class="sim-config">
+      <h2>🎯 Simulado — ${SIM_TOTAL_QUESTOES} questões</h2>
+      <p>Questões sorteadas aleatoriamente do banco completo a cada tentativa — toda vez que você refizer o simulado, virá uma combinação diferente de questões.</p>
+      <p>Critério de correção (padrão CEBRASPE):</p>
+      <div class="sim-rules">
+        <div class="sim-rule positive">
+          <div class="sr-icon">✅</div>
+          <div class="sr-val">+${SIM_PONTO_CERTO}</div>
+          <div class="sr-lbl">por questão CERTA</div>
+        </div>
+        <div class="sim-rule negative">
+          <div class="sr-icon">❌</div>
+          <div class="sr-val">${SIM_PONTO_ERRADO}</div>
+          <div class="sr-lbl">por questão ERRADA</div>
+        </div>
+        <div class="sim-rule neutral">
+          <div class="sr-icon">⬜</div>
+          <div class="sr-val">0</div>
+          <div class="sr-lbl">questão em branco</div>
+        </div>
+      </div>
+      <p>Nota máxima possível: <b>${SIM_TOTAL_QUESTOES} pontos</b>. Nota mínima considerada "aprovado" nesta simulação: <b>${SIM_NOTA_APROVACAO} pontos</b>.</p>
+      <p style="font-size:0.78rem;margin-top:10px;">⚠️ O critério de aprovação real do concurso pode variar — este parâmetro é apenas uma referência de estudo.</p>
+      <div class="nav-buttons" style="margin-top:18px;">
+        <button class="btn" id="startSimuladoBtn">Iniciar Simulado</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('startSimuladoBtn').addEventListener('click', startSimulado);
+}
+
+function startSimulado(){
+  const pool = shuffle(QUESTOES);
+  simQuestions = pool.slice(0, Math.min(SIM_TOTAL_QUESTOES, pool.length));
+  simAnswers = new Array(simQuestions.length).fill(null);
+  simCurrent = 0;
+  renderSimuladoQuestion();
+}
+
+function renderSimNav(){
+  let html = '<div class="sim-nav">';
+  simQuestions.forEach((q,i)=>{
+    let cls = 'sim-nav-item';
+    if(i === simCurrent) cls += ' current';
+    if(simAnswers[i] === null) cls += ' blank';
+    else {
+      const correto = simAnswers[i] === q.correta;
+      cls += correto ? ' answered-c' : ' answered-e';
+    }
+    html += `<div class="${cls}" data-idx="${i}">${i+1}</div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderSimuladoQuestion(){
+  const area = document.getElementById('simuladoArea');
+  const q = simQuestions[simCurrent];
+  const pct = Math.round(((simCurrent)/simQuestions.length)*100);
+  const respondidas = simAnswers.filter(a=>a !== null).length;
+
+  area.innerHTML = `
+    <div class="quiz-header">
+      <span>Simulado — Questão ${simCurrent+1} de ${simQuestions.length}</span>
+      <span>Respondidas: ${respondidas}/${simQuestions.length}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    ${renderSimNav()}
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="q-tag">${q.tema}</span>
+        <span class="q-tag">${q.artigo}</span>
+        ${q.prova ? `<span class="q-tag" style="color:var(--accent2);">${q.prova}</span>` : ''}
+      </div>
+      ${montarEnunciadoHTML(q, simCurrent)}
+      <div class="options">
+        <div class="option" data-val="true"><div class="opt-letter">C</div><div>CERTO</div></div>
+        <div class="option" data-val="false"><div class="opt-letter">E</div><div>ERRADO</div></div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn secondary" id="simPrevBtn" ${simCurrent===0?'disabled':''}>⬅ Anterior</button>
+      ${simCurrent === simQuestions.length-1
+        ? '<button class="btn" id="simFinishBtn">Finalizar Simulado</button>'
+        : '<button class="btn" id="simNextBtn">Próxima ➜</button>'}
+    </div>
+    ${respondidas === simQuestions.length ? '' : `
+    <div class="sim-finish-bar">
+      <button class="btn secondary" id="simFinishEarlyBtn">Finalizar agora (${simQuestions.length-respondidas} em branco)</button>
+    </div>`}
+  `;
+
+  // marcar opção já selecionada (se voltou)
+  if(simAnswers[simCurrent] !== null){
+    document.querySelectorAll('.option').forEach(o=>{
+      if((o.dataset.val === 'true') === simAnswers[simCurrent]){
+        o.classList.add('selected');
+      }
+    });
+  }
+
+  document.querySelectorAll('.option').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+      simAnswers[simCurrent] = (opt.dataset.val === 'true');
+      // atualiza nav lateral sem re-render total (mantém posição de leitura)
+      const navItem = document.querySelector(`.sim-nav-item[data-idx="${simCurrent}"]`);
+      if(navItem){
+        navItem.classList.remove('blank','answered-c','answered-e');
+        const correto = simAnswers[simCurrent] === q.correta;
+        navItem.classList.add(correto ? 'answered-c' : 'answered-e');
+      }
+      const respEl = document.querySelector('.quiz-header span:last-child');
+      if(respEl) respEl.textContent = `Respondidas: ${simAnswers.filter(a=>a!==null).length}/${simQuestions.length}`;
+    });
+  });
+
+  document.querySelectorAll('.sim-nav-item').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      simCurrent = parseInt(item.dataset.idx);
+      renderSimuladoQuestion();
+    });
+  });
+
+  const prevBtn = document.getElementById('simPrevBtn');
+  if(prevBtn) prevBtn.addEventListener('click', ()=>{
+    simCurrent = Math.max(0, simCurrent-1);
+    renderSimuladoQuestion();
+  });
+
+  const nextBtn = document.getElementById('simNextBtn');
+  if(nextBtn) nextBtn.addEventListener('click', ()=>{
+    simCurrent = Math.min(simQuestions.length-1, simCurrent+1);
+    renderSimuladoQuestion();
+  });
+
+  const finishBtn = document.getElementById('simFinishBtn');
+  if(finishBtn) finishBtn.addEventListener('click', finalizarSimulado);
+
+  const finishEarlyBtn = document.getElementById('simFinishEarlyBtn');
+  if(finishEarlyBtn) finishEarlyBtn.addEventListener('click', ()=>{
+    if(confirm('Existem questões em branco. Deseja finalizar o simulado mesmo assim?')){
+      finalizarSimulado();
+    }
+  });
+}
+
+function finalizarSimulado(){
+  let acertos = 0, erros = 0, brancos = 0;
+  simQuestions.forEach((q,i)=>{
+    const resp = simAnswers[i];
+    if(resp === null) brancos++;
+    else if(resp === q.correta) acertos++;
+    else erros++;
+
+    // salva cada resposta individualmente (questões em branco não são salvas)
+    if(resp !== null) salvarResposta(q, resp === q.correta);
+  });
+
+  const notaLiquida = (acertos * SIM_PONTO_CERTO) + (erros * SIM_PONTO_ERRADO);
+  const notaMaxima = simQuestions.length * SIM_PONTO_CERTO;
+  const aprovado = notaLiquida >= SIM_NOTA_APROVACAO;
+
+  // salva o resumo da rodada (tema = "Simulado")
+  salvarSessao('Simulado', simQuestions.length, notaLiquida);
+
+  renderSimuladoResultado(acertos, erros, brancos, notaLiquida, notaMaxima, aprovado);
+}
+
+function renderSimuladoResultado(acertos, erros, brancos, notaLiquida, notaMaxima, aprovado){
+  const area = document.getElementById('simuladoArea');
+
+  let reviewHtml = '';
+  simQuestions.forEach((q,i)=>{
+    const resp = simAnswers[i];
+    let statusCls, statusTxt, respTxt;
+    if(resp === null){
+      statusCls='blank'; statusTxt='EM BRANCO'; respTxt='—';
+    } else if(resp === q.correta){
+      statusCls='correct'; statusTxt='CERTO'; respTxt = resp ? 'CERTO' : 'ERRADO';
+    } else {
+      statusCls='wrong'; statusTxt='ERRADO'; respTxt = resp ? 'CERTO' : 'ERRADO';
+    }
+    const gabarito = q.correta ? 'CERTO' : 'ERRADO';
+    reviewHtml += `
+      <div class="review-item">
+        <span class="ri-status ${statusCls}">${i+1}. ${statusTxt}</span>
+        <div class="q-meta"><span class="q-tag">${q.tema}</span><span class="q-tag">${q.artigo}</span></div>
+        ${montarEnunciadoHTML(q, i)}
+        <div style="font-size:0.85rem;margin-bottom:6px;">
+          Sua resposta: <b>${respTxt}</b> &nbsp;|&nbsp; Gabarito: <b style="color:var(--green);">${gabarito}</b>
+        </div>
+        <div>${q.explicacao}</div>
+        <div class="macete"><b>💡 Macete:</b> ${q.macete}</div>
+      </div>
+    `;
+  });
+
+  area.innerHTML = `
+    <div class="question-card sim-result-header">
+      <h2>🏁 Simulado concluído!</h2>
+      <div class="big-score">${notaLiquida} / ${notaMaxima}</div>
+      <div class="sim-pass-badge ${aprovado?'approved':'failed'}">
+        ${aprovado ? '✅ APROVADO (nesta simulação)' : '❌ NÃO APROVADO (nesta simulação)'}
+      </div>
+      <div class="sim-breakdown">
+        <div class="bd-box bd-correct"><div class="bd-num">${acertos}</div><div class="bd-lbl">Acertos (+${SIM_PONTO_CERTO} cada)</div></div>
+        <div class="bd-box bd-wrong"><div class="bd-num">${erros}</div><div class="bd-lbl">Erros (${SIM_PONTO_ERRADO} cada)</div></div>
+        <div class="bd-box bd-blank"><div class="bd-num">${brancos}</div><div class="bd-lbl">Em branco (0)</div></div>
+      </div>
+      <p style="color:var(--muted);font-size:0.85rem;">
+        Nota líquida = (${acertos} × ${SIM_PONTO_CERTO}) + (${erros} × ${SIM_PONTO_ERRADO}) + (${brancos} × 0) = <b>${notaLiquida}</b><br>
+        Critério de aprovação nesta simulação: ≥ ${SIM_NOTA_APROVACAO} pontos.
+      </p>
+      <div class="nav-buttons" style="margin-top:16px;">
+        <button class="btn" id="redoSimuladoBtn">🔄 Refazer com novas questões</button>
+      </div>
+    </div>
+    <h3 style="margin:16px 0 10px;color:var(--accent2);">📋 Revisão completa</h3>
+    ${reviewHtml}
+  `;
+
+  document.getElementById('redoSimuladoBtn').addEventListener('click', startSimulado);
+}
+
+function updateDashboardStats(){
+  document.getElementById('sessionDone').textContent = sessionTotal;
+  document.getElementById('sessionScore').textContent = sessionTotal>0 ? Math.round((sessionCorrect/sessionTotal)*100)+'%' : '0%';
+}
+
+function renderBank(){
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const list = document.getElementById('bankList');
+  const filtered = QUESTOES.filter(q=>
+    q.enunciado.toLowerCase().includes(search) ||
+    q.tema.toLowerCase().includes(search) ||
+    q.artigo.toLowerCase().includes(search) ||
+    (q.opcoes && q.opcoes.some(o=>o.toLowerCase().includes(search)))
+  );
+
+  list.innerHTML = `<p style="color:var(--muted);margin-bottom:10px;font-size:0.85rem;">${filtered.length} questão(ões) encontrada(s)</p>` +
+  filtered.map((q,idx)=>{
+    let gabarito;
+    if(q.tipo === 'CE'){
+      gabarito = q.correta ? 'CERTO' : 'ERRADO';
+    } else {
+      const letters=['A','B','C','D','E'];
+      gabarito = `${letters[q.correta]}) ${q.opcoes[q.correta]}`;
+    }
+    let optsHtml = '';
+    if(q.opcoes){
+      const letters=['A','B','C','D','E'];
+      optsHtml = '<ul style="margin:6px 0 6px 18px;color:var(--muted);font-size:0.85rem;">' +
+        q.opcoes.map((o,i)=>`<li>${letters[i]}) ${o}</li>`).join('') + '</ul>';
+    }
+    return `
+    <div class="bank-item">
+      <div class="q-meta"><span class="q-tag">${q.tema}</span><span class="q-tag">${q.artigo}</span></div>
+      <div class="q-text"><b>${idx+1}.</b> ${q.enunciado}</div>
+      ${optsHtml}
+      <div class="ans">✔ Gabarito: ${gabarito}</div>
+      <div class="macete"><b>💡 Macete:</b> ${q.macete}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMacetes(){
+  const list = document.getElementById('macetesList');
+  list.innerHTML = MACETES.map(m=>`
+    <div class="macete-card">
+      <span class="badge">Macete temático</span>
+      <h3>${m.tema}</h3>
+      <p>${m.texto}</p>
+    </div>
+  `).join('');
+}
+
+init();
+</script>
+</body>
+</html>
